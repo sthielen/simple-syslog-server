@@ -103,6 +103,7 @@ exports.parser = parser
  * SOCK_STREAM service
  */
 const net = require('net')
+const tls = require('tls')
 
 function SimpleStreamService( messageReceived, options ) {
 	return new StreamService( messageReceived, options );
@@ -122,6 +123,44 @@ function StreamService(fn, opt) {
 }
 
 StreamService.prototype.listen = function( port, callback ){
+    var server = this.server
+    callback = callback || noop
+    this.port = port || 514 // default is 514
+	debug('Binding to ' + this.port)
+    var me = this
+    server
+        .on('error', function(err) {
+            debug('binding error: %o', err)
+            callback(err)
+        })
+        .on('listening', function() {
+            debug('tcp binding ok')
+			me.port = server.address().port
+            callback(null, me)
+        })
+        .listen( port, this.opt.address )
+
+    return this
+}
+
+function tlsFactory( messageReceived, options ) {
+	return new TLSStreamService( messageReceived, options )
+}
+
+function TLSStreamService(fn, opt) {
+    this.opt = opt || {}
+    this.handler = fn
+
+    this.server = tls.createServer( opt, ( connection ) => {
+		debug('New connection from ' + connection.remoteAddress + ":" + connection.remotePort )
+		var state = new ConnectionState( this, connection );
+		connection.on('data', ( buffer ) => { state.more_data( buffer ) } )
+		connection.on('end', () => { state.closed() } )
+	})
+	return this;
+}
+
+TLSStreamService.prototype.listen = function( port, callback ){
     var server = this.server
     callback = callback || noop
     this.port = port || 514 // default is 514
@@ -269,5 +308,6 @@ class FrameParser {
 }
 
 exports.StreamService = SimpleStreamService
+exports.TLSStreamService = tlsFactory
 exports.FrameParser = FrameParser
 
