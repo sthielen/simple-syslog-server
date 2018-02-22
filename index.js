@@ -211,7 +211,7 @@ class FrameParser {
 		} else if( this.frame_state == FRAME_TYPE_OCTET ) {
 			this.check_octet_frame()
 		} else {
-			throw "Invalid farme state";
+			throw "Invalid frame state";
 		}
 	}
 
