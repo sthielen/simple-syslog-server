@@ -46,6 +46,10 @@ proto.listen = function(port, cb) {
     return this
 }
 
+proto.close = function( callback ){
+	this.server.close( callback );
+}
+
 var timeMaxLen = 'Dec 15 10:58:44'.length
 
 var Severity = {}
@@ -160,6 +164,10 @@ StreamService.prototype.listen = function( port, callback ){
         .listen( port, this.opt.address )
 
     return this
+}
+
+StreamService.prototype.close = function( callback ) {
+	this.server.close(callback);
 }
 
 class ConnectionState {
