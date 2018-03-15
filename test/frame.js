@@ -97,5 +97,21 @@ describe( "StreamFrameParser", () => {
 		it( "emits the first message", () => { assert.equal( frames[0], message1 ) } )
 		it( "emits the second message", () => { assert.equal( frames[1], message2 ) } )
 	})
+
+	describe( "given given a really large frame", () => {
+		const count = 2500;
+		beforeEach( () => {
+			var output = Buffer.from("")
+			console.log("Building buffer")
+			for( var i = 0 ; i < count; i++){
+				output = Buffer.concat([output, Buffer.from("Test " + i + "\n", 'utf-8')]);
+			}
+			console.log("Done")
+			parser.feed( output )
+			parser.done()
+		})
+
+		it( "emits all frame", () => { assert.equal( frames.length, count ) } )
+	})
 })
 
