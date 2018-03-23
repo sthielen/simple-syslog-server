@@ -138,12 +138,17 @@ function StreamService( serviceModule, fn, opt) {
 
     this.server = serviceModule.createServer( this.opt, ( connection ) => {
 		debug('New connection from ' + connection.remoteAddress + ":" + connection.remotePort )
-		var state = new ConnectionState( this, connection );
+		let state = new ConnectionState( this, connection );
+		this.emit("connection", {connection, state});
 		connection.on('data', ( buffer ) => { state.more_data( buffer ) } )
 		connection.on('end', () => { state.closed() } )
 	})
 	return this;
 }
+
+const util = require("util")
+const EventEmitter = require("eventemitter");
+util.inherits(StreamService, EventEmitter);
 
 StreamService.prototype.listen = function( port, callback ){
     var server = this.server
@@ -155,11 +160,13 @@ StreamService.prototype.listen = function( port, callback ){
         .on('error', function(err) {
             debug('binding error: %o', err)
             callback(err)
+	        this.emit('error', {this.opt.address})
         })
         .on('listening', function() {
             debug('tcp binding ok')
 			me.port = server.address().port
             callback(null, me)
+	        this.emit('listening', {port: port, address: this.opt.address})
         })
         .listen( port, this.opt.address )
 
