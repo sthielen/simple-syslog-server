@@ -309,4 +309,4 @@ class FrameParser {
 exports.StreamService = SimpleStreamService
 exports.TLSStreamService = tlsFactory
 exports.FrameParser = FrameParser
-
+exports.ConnectionState = ConnectionState
