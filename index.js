@@ -147,7 +147,7 @@ function StreamService( serviceModule, fn, opt) {
 }
 
 const util = require("util")
-const EventEmitter = require("eventemitter");
+const EventEmitter = require("events");
 util.inherits(StreamService, EventEmitter);
 
 StreamService.prototype.listen = function( port, callback ){
@@ -160,13 +160,13 @@ StreamService.prototype.listen = function( port, callback ){
         .on('error', function(err) {
             debug('binding error: %o', err)
             callback(err)
-	        this.emit('error', {this.opt.address})
+	        me.emit('error', {address: me.opt.address});
         })
         .on('listening', function() {
             debug('tcp binding ok')
 			me.port = server.address().port
             callback(null, me)
-	        this.emit('listening', {port: port, address: this.opt.address})
+	        me.emit('listening', {port: port, address: me.opt.address})
         })
         .listen( port, this.opt.address )
 
