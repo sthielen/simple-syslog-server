@@ -1,6 +1,6 @@
 {
   "name": "syslogd",
-  "version": "1.1.2",
+  "version": "2.0.0",
   "description": "syslog server and parser",
   "main": "index.js",
   "directories": {
@@ -21,8 +21,8 @@
     "debug": "^2.1.0"
   },
   "devDependencies": {
-    "mocha" : "3.4.2",
-    "selfsigned" : "1.10.1"
+    "mocha": "3.4.2",
+    "selfsigned": "1.10.1"
   },
   "repository": {
     "type": "git",
@@ -32,5 +32,7 @@
     "url": "https://github.com/chunpu/syslogd/issues"
   },
   "homepage": "https://github.com/chunpu/syslogd",
-  "engines" : { "node" : ">=6.0.0" }
+  "engines": {
+    "node": ">=6.0.0"
+  }
 }
