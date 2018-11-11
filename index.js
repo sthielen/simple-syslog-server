@@ -63,10 +63,14 @@ var Facility = {} // to much
 
 function parsePRI(raw) {
     // PRI means Priority, includes Facility and Severity
-    // e.g. 10110111 =  10110: facility 111: severity
-    var binary = (~~raw).toString(2)
-    var facility = parseInt(binary.substr(binary.length - 3), 2)
-    var severity = parseInt(binary.substring(0, binary.length - 3), 2)
+    // e.g. 00110111 =  facility: 00110, severity: 111
+		// e.g. facility = 6, severity=7
+
+		// To reverse
+		// Grab last 3 bits
+    var severity = parseInt(raw) % 8
+	  // Shift last 3 bits to right (and throw away)
+    var facility = parseInt(raw) >> 3
     return [facility, severity]
 }
 
