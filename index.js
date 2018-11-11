@@ -164,13 +164,13 @@ StreamService.prototype.listen = function( port, callback ){
         .on('error', function(err) {
             debug('binding error: %o', err)
             callback(err)
-	        me.emit('error', {address: me.opt.address});
+	          // me.emit('error', {address: me.opt.address});
         })
         .on('listening', function() {
             debug('tcp binding ok')
 			me.port = server.address().port
             callback(null, me)
-	        me.emit('listening', {port: port, address: me.opt.address})
+	        // me.emit('listening', {port: port, address: me.opt.address})
         })
         .listen( port, this.opt.address )
 
