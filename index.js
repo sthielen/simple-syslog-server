@@ -74,6 +74,7 @@ function parsePRI(raw) {
     return [facility, severity]
 }
 
+// TODO Optimise parser https://sematext.com/blog/what-is-syslog-daemons-message-formats-and-protocols/
 function parser(msg, rinfo) {
     // https://tools.ietf.org/html/rfc5424
     // e.g. <PRI>time hostname tag: info
@@ -205,6 +206,7 @@ class ConnectionState {
 			port: this.info.port,
 			size: frame.length
 		}
+            console.log(`raw:${frame}`);
 		let message = parser( frame, clientInfo )
 		this.service.handler( message )
 	}
