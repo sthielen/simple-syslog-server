@@ -10,7 +10,7 @@ let x509 = selfsigned.generate( attributes, { days: 2 } ) ;
 
 describe( 'given a TLS Syslog Server', () => {
 	it( 'Receives TLS/TCP/IP messages', (done) => {
-		const StreamSyslogd = require('../').TLSStreamService ;
+		const StreamSyslogd = require('../').TLS ;
 		assert( StreamSyslogd, 'TLSStreamService not defined' ) ;
 
 		var time = 'Dec 15 10:58:44' ;

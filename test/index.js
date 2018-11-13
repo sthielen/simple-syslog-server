@@ -10,7 +10,7 @@ describe('given a syslogd service', () => {
 		var testMsg = '<183>' + time + ' hostname tag: info' ;
 		const port = 10514 ;
 
-		Syslogd(function(info) {
+		Syslogd.UDP(function(info) {
 			//console.log(info)
 			info.port = null ; // port is random
 			var shouldRet = {

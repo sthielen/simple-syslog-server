@@ -2,21 +2,88 @@
 var dgram = require('dgram') ;
 var debug = require('debug')('syslogd') ;
 
-module.exports = exports = Syslogd ;
+var SEVERITY = [
+	'Emergency',
+	'Alert',
+	'Critical',
+	'Error',
+	'Warning',
+	'Notice',
+	'Informational',
+	'Debug'
+] ;
 
-function noop() {}
+var FACILITY = [
+	'kernel messages',
+	'user-level messages',
+	'mail system',
+	'system daemons',
+	'security/authorization messages',
+	'messages generated internally by syslogd',
+	'line printer subsystem',
+	'network news subsystem',
+	'UUCP subsystem',
+	'clock daemon (note 2)',
+	'security/authorization messages (note 1)',
+	'FTP daemon',
+	'NTP subsystem',
+	'log audit (note 1)',
+	'log alert (note 1)',
+	'clock daemon (note 2)',
+	'local use 0  (local0)',
+	'local use 1  (local1)',
+	'local use 2  (local2)',
+	'local use 3  (local3)',
+	'local use 4  (local4)',
+	'local use 5  (local5)',
+	'local use 6  (local6)',
+	'local use 7  (local7)'
+] ;
 
-function Syslogd(fn, opt) {
-	if (!(this instanceof Syslogd)) 
-		return new Syslogd(fn, opt) ;
-    
+var SERVICE = {
+	'UDP': UDP,
+	'TCP': TCP,
+	'TLS': TLS
+} ;
+
+function factory(transport) {
+	if(transport in SERVICE)
+		return SERVICE[transport] ;
+
+	throw new Error('Transport not supported: ' + transport) ;
+}
+
+module.exports = factory ;
+
+function noop() {
+}
+
+function facility(code) {
+	if (code >= 0 && code <= 23)
+		return FACILITY[code] ;
+	else
+		throw new Error('Invalid facility code: ' + code) ;
+}
+
+function severity(code) {
+	if (code >= 0 && code <= 7) 
+		return SEVERITY[code] ;
+	else 
+		throw new Error('Invalid severity code: ' + code) ;
+	
+}
+
+function UDP(fn, opt) {
+	if (!(this instanceof UDP))
+		return new UDP(fn, opt) ;
+
 	this.opt = opt || {} ;
 	this.handler = fn ;
 
 	this.server = dgram.createSocket('udp4') ;
 }
 
-Syslogd.prototype.listen = function(port, cb) {
+UDP.prototype.listen = function(port, cb) {
 	var server = this.server ;
 	if (this.port) {
 		debug('server has binded to %s', port) ;
@@ -39,19 +106,14 @@ Syslogd.prototype.listen = function(port, cb) {
 		var info = parser(msg, rinfo) ;
 		me.handler(info) ;
 	})
-	.bind(port, this.opt.address ) ;
+	.bind(port, this.opt.address) ;
 
 	return this ;
 } ;
 
-Syslogd.prototype.close = function( callback ){
-	this.server.close( callback ) ;
+UDP.prototype.close = function(callback) {
+	this.server.close(callback) ;
 } ;
-
-var Severity = {} ;
-'Emergency Alert Critical Error Warning Notice Informational Debug'.split(' ').forEach(function(x, i) {
-	Severity[x.toUpperCase()] = i ;
-}) ;
 
 function parsePRI(raw) {
 	// PRI means Priority, includes Facility and Severity
@@ -72,7 +134,7 @@ function parser(msg, rinfo) {
 	// e.g. <PRI>time hostname tag: info
 	msg = msg + '' ;
 	var tagIndex = msg.indexOf(': ') ;
-	if( tagIndex == -1 ){
+	if (tagIndex == -1) {
 		return {
 			facility: undefined,
 			severity: undefined,
@@ -114,7 +176,7 @@ function parser(msg, rinfo) {
 	}
 }
 
-exports.parser = parser ;
+module.exports.parser = parser ;
 
 /*
  * SOCK_STREAM service
@@ -122,28 +184,28 @@ exports.parser = parser ;
 const net = require('net') ;
 const tls = require('tls') ;
 
-function SimpleStreamService( messageReceived, options ) {
-	return new StreamService( net, messageReceived, options ) ;
+function TCP(messageReceived, options) {
+	return new StreamService(net, messageReceived, options) ;
 }
 
-function tlsFactory( messageReceived, options ) {
-	return new StreamService( tls, messageReceived, options ) ;
+function TLS(messageReceived, options) {
+	return new StreamService(tls, messageReceived, options) ;
 }
 
-function StreamService( serviceModule, fn, opt) {
+function StreamService(serviceModule, fn, opt) {
 	this.opt = opt || {} ;
 	this.handler = fn ;
 
-	this.server = serviceModule.createServer( this.opt, ( connection ) => {
-		debug('New connection from ' + connection.remoteAddress + ':' + connection.remotePort ) ;
-		let state = new ConnectionState( this, connection ) ;
+	this.server = serviceModule.createServer(this.opt, (connection) => {
+		debug('New connection from ' + connection.remoteAddress + ':' + connection.remotePort) ;
+		let state = new ConnectionState(this, connection) ;
 		this.emit('connection', {connection, state}) ;
-		connection.on('data', ( buffer ) => {
-			state.more_data( buffer ) ; 
-		} ) ;
+		connection.on('data', (buffer) => {
+			state.more_data(buffer) ;
+		}) ;
 		connection.on('end', () => {
-			state.closed() ; 
-		} ) ;
+			state.closed() ;
+		}) ;
 	}) ;
 	return this ;
 }
@@ -152,7 +214,7 @@ const util = require('util') ;
 const EventEmitter = require('events') ;
 util.inherits(StreamService, EventEmitter) ;
 
-StreamService.prototype.listen = function( port, callback ){
+StreamService.prototype.listen = function(port, callback) {
 	var server = this.server ;
 	callback = callback || noop ;
 	this.port = port || 514 ; // default is 514
@@ -170,32 +232,32 @@ StreamService.prototype.listen = function( port, callback ){
 		callback(null, me) ;
 		// me.emit('listening', {port: port, address: me.opt.address})
 	})
-	.listen( port, this.opt.address ) ;
+	.listen(port, this.opt.address) ;
 
 	return this ;
 } ;
 
-StreamService.prototype.close = function( callback ) {
+StreamService.prototype.close = function(callback) {
 	this.server.close(callback) ;
 } ;
 
-function ConnectionState( service, connection ){
+function ConnectionState(service, connection) {
 	this.service = service ;
 	this.info = {
 		address: connection.remoteAddress,
 		family: connection.remoteFamily,
 		port: connection.remotePort
 	} ;
-	this.frameParser = new FrameParser( ( frame ) => {
-		this.dispatch_message( frame ) ;
+	this.frameParser = new FrameParser((frame) => {
+		this.dispatch_message(frame) ;
 	}) ;
 }
 
-ConnectionState.prototype.more_data = function( buffer ) {
-	this.frameParser.feed( buffer ) ;
+ConnectionState.prototype.more_data = function(buffer) {
+	this.frameParser.feed(buffer) ;
 } ;
 
-ConnectionState.prototype.dispatch_message = function( frame ) {
+ConnectionState.prototype.dispatch_message = function(frame) {
 	let clientInfo = {
 		address: this.info.address,
 		family: this.info.family,
@@ -203,11 +265,11 @@ ConnectionState.prototype.dispatch_message = function( frame ) {
 		size: frame.length
 	} ;
 	console.log(`raw:${frame}`) ;
-	let message = parser( frame, clientInfo ) ;
-	this.service.handler( message ) ;
+	let message = parser(frame, clientInfo) ;
+	this.service.handler(message) ;
 } ;
 
-ConnectionState.prototype.closed = function(){
+ConnectionState.prototype.closed = function() {
 	this.frameParser.done() ;
 } ;
 
@@ -216,24 +278,24 @@ let FRAME_TYPE_NEWLINE = 1 ;
 let FRAME_TYPE_OCTET = 2 ;
 
 function FrameParser(callback) {
-	this.buffer = Buffer.from( '' ) ;
+	this.buffer = Buffer.from('') ;
 	this.callback = callback ;
 	this.frame_state = FRAME_TYPE_UNKNOWN ;
 }
 
-FrameParser.prototype.feed = function( data ){
-	this.buffer = Buffer.concat( [ this.buffer, data ] ) ;
+FrameParser.prototype.feed = function(data) {
+	this.buffer = Buffer.concat([this.buffer, data]) ;
 	this.check_framing() ;
 } ;
 
 FrameParser.prototype.done = function() {
-	if( this.buffer.length > 0 )
-		this.callback( this.buffer.toString() ) ;
+	if (this.buffer.length > 0)
+		this.callback(this.buffer.toString()) ;
 
-	this.buffer = Buffer.from( '', 'UTF-8' ) ;
+	this.buffer = Buffer.from('', 'UTF-8') ;
 } ;
 
-FrameParser.prototype.check_framing = function(){
+FrameParser.prototype.check_framing = function() {
 	let continue_digesting ;
 	do {
 		if (this.frame_state == FRAME_TYPE_UNKNOWN)
@@ -245,26 +307,26 @@ FrameParser.prototype.check_framing = function(){
 		else
 			throw 'Invalid frame state' ;
 
-	}while( continue_digesting );
+	} while (continue_digesting);
 } ;
 
 FrameParser.prototype.decide_on_frame_type = function() {
 	// do nothing if buffer is too short
-	if( this.buffer.length < 8 )
+	if (this.buffer.length < 8)
 		return false ;
 
 	// shrink our check buffer
-	let check = this.buffer.slice( 0, 8 ) ;
+	let check = this.buffer.slice(0, 8) ;
 	// Do we have spaces?
-	let space = check.indexOf( ' ' ) ;
-	if( space == -1 ){
+	let space = check.indexOf(' ') ;
+	if (space == -1) {
 		this.frame_state = FRAME_TYPE_NEWLINE ;
 		return true ;
 	}
 
 	// Check output if we can convert it to a number
-	let size = parseInt( check.slice( 0, space ), 10 ) ;
-	if( isNaN( size ) || size < 2 ) {
+	let size = parseInt(check.slice(0, space), 10) ;
+	if (isNaN(size) || size < 2) {
 		this.frame_state = FRAME_TYPE_NEWLINE ;
 		return true ;
 	}
@@ -272,40 +334,44 @@ FrameParser.prototype.decide_on_frame_type = function() {
 	// Octet framing
 	this.octets = size ;
 	this.frame_state = FRAME_TYPE_OCTET ;
-	this.buffer = this.buffer.slice( space + 1 ) ;
+	this.buffer = this.buffer.slice(space + 1) ;
 	return true ;
 } ;
 
 FrameParser.prototype.check_newline_framing = function() {
-	let indexOfNewLine = this.buffer.indexOf( '\n' ) ;
-	if( indexOfNewLine == -1 )  return false ;
+	let indexOfNewLine = this.buffer.indexOf('\n') ;
+	if (indexOfNewLine == -1) return false ;
 
-	const frame = this.buffer.slice( 0, indexOfNewLine ) ;
-	this.buffer = this.buffer.slice( indexOfNewLine + 1 ) ;
+	const frame = this.buffer.slice(0, indexOfNewLine) ;
+	this.buffer = this.buffer.slice(indexOfNewLine + 1) ;
 
-	return this._emit_and_reset( frame ) ;
+	return this._emit_and_reset(frame) ;
 } ;
 
 FrameParser.prototype.check_octet_frame = function() {
 	let size = this.octets ;
-	if( !size )  throw 'Not currently in octet strategy' ;
+	if (!size) throw 'Not currently in octet strategy' ;
 
-	if( this.buffer.length < size )  return false ;
+	if (this.buffer.length < size) return false ;
 
-	let frame = this.buffer.slice( 0, size ) ;
-	this.buffer = this.buffer.slice( size ) ;
+	let frame = this.buffer.slice(0, size) ;
+	this.buffer = this.buffer.slice(size) ;
 
-	return this._emit_and_reset( frame ) ;
+	return this._emit_and_reset(frame) ;
 } ;
 
-FrameParser.prototype._emit_and_reset = function( frame ){
-	this.callback( frame.toString('utf-8') ) ;
+FrameParser.prototype._emit_and_reset = function(frame) {
+	this.callback(frame.toString('utf-8')) ;
 
 	this.frame_state = FRAME_TYPE_UNKNOWN ;
 	return true ;
 } ;
 
-exports.StreamService = SimpleStreamService ;
-exports.TLSStreamService = tlsFactory ;
-exports.FrameParser = FrameParser ;
-exports.ConnectionState = ConnectionState ;
+module.exports.facility = facility ;
+module.exports.severity = severity ;
+module.exports.UDP = UDP ;
+module.exports.TCP = TCP ;
+module.exports.TLS = TLS ;
+
+module.exports.FrameParser = FrameParser ;
+module.exports.ConnectionState = ConnectionState ;

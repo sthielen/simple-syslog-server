@@ -5,7 +5,7 @@ var net = require('net') ;
 
 describe( 'given a TCP Syslog Server', () => {
 	it( 'Receives TCP/IP messages', (done) => {
-		const StreamSyslogd = require('../').StreamService ;
+		const StreamSyslogd = require('../').TCP ;
 		assert( StreamSyslogd, 'StreamService not defined' ) ;
 
 		var time = 'Dec 15 10:58:44' ;
