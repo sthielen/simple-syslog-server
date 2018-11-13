@@ -10,7 +10,7 @@ describe('given a syslogd service', () => {
 		var testMsg = '<183>' + time + ' hostname tag: info' ;
 		const port = 10514 ;
 
-		var server = Syslogd('UDP', function(info) {
+		var server = Syslogd.UDP(function(info) {
 			//console.log(info)
 			info.port = null ; // port is random
 			var shouldRet = {
@@ -29,7 +29,7 @@ describe('given a syslogd service', () => {
 			server.close() ;
 			done() ;
 		}).listen(port, function(err) { // sudo
-			//console.log('listen', err)
+			console.log('listen', err)
 			assert(!err) ;
 			var client = dgram.createSocket('udp4') ;
 			var buffer = new Buffer(testMsg) ;

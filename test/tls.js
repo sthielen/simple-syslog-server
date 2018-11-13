@@ -22,7 +22,7 @@ describe( 'given a TLS Syslog Server', () => {
 			ca: [ x509['cert'] ]
 		} ;
 
-		StreamSyslogd(function(info) {
+		var server = StreamSyslogd(function(info) {
 			info.port = null ; // port is random
 			info.address = null ;
 			info.family = null ;
@@ -39,6 +39,7 @@ describe( 'given a TLS Syslog Server', () => {
 				msg: 'info'
 			} ;
 			assert.deepEqual(shouldRet, info) ;
+			server.close() ;
 			done() ;
 		}, options ).listen( port, function(err, service ) { // sudo
 			//This is required because NodeJS is really strange about self signed certificates.

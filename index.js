@@ -47,8 +47,11 @@ var SERVICE = {
 } ;
 
 function factory(transport) {
+	var args = Array.from(arguments) ;
+	// Throw away transport
+	args.shift() ;
 	if(transport in SERVICE)
-		return SERVICE[transport] ;
+		return SERVICE[transport].apply(null, args) ;
 
 	throw new Error('Transport not supported: ' + transport) ;
 }

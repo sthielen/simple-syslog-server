@@ -12,7 +12,7 @@ describe( 'given a TCP Syslog Server', () => {
 		var testMsg = '<183>' + time + ' hostname tag: info' ;
 		const port = 0 ;
 
-		StreamSyslogd(function(info) {
+		var server = StreamSyslogd(function(info) {
 			info.port = null ; // port is random
 			info.address = null ;
 			info.family = null ;
@@ -29,6 +29,7 @@ describe( 'given a TCP Syslog Server', () => {
 				msg: 'info'
 			} ;
 			assert.deepEqual(shouldRet, info) ;
+			server.close() ;
 			done() ;
 		}).listen( port, function(err, service ) { // sudo
 			assert.ifError( err ) ;
