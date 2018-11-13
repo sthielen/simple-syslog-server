@@ -1,5 +1,6 @@
-// vim: set ft=javascript tabstop=4 softtabstop=4 shiftwidth=4 autoindent:
+/* eslint-disable no-undef */
 var assert = require('assert') ;
+// eslint-disable-next-line no-unused-vars
 let mocha = require( 'mocha' ) ;
 let tls = require('tls') ;
 let selfsigned = require( 'selfsigned' ) ;
@@ -26,16 +27,16 @@ describe( 'given a TLS Syslog Server', () => {
 			info.address = null ;
 			info.family = null ;
 			var shouldRet = {
-				  facility: 22
-				, severity: 7
-				, tag: 'tag'
-				, time: new Date(time + ' ' + new Date().getFullYear())
-				, hostname: 'hostname'
-				, address: null
-				, family: null
-				, port: null
-				, size: testMsg.length
-				, msg: 'info'
+				facility: 22,
+				severity: 7,
+				tag: 'tag',
+				time: new Date(time + ' ' + new Date().getFullYear()),
+				hostname: 'hostname',
+				address: null,
+				family: null,
+				port: null,
+				size: testMsg.length,
+				msg: 'info'
 			} ;
 			assert.deepEqual(shouldRet, info) ;
 			done() ;
@@ -49,6 +50,7 @@ describe( 'given a TLS Syslog Server', () => {
 			assert.ifError( err ) ;
 			var buffer = new Buffer(testMsg) ;
 			var client = tls.connect( service.port, 'localhost', { checkServerIdentity: identity_check, ca: [ x509['cert'] ] }, function() {
+				// eslint-disable-next-line no-unused-vars
 				client.write(buffer, function(err, bytes) {
 					assert.ifError( err ) ;
 					client.end() ;

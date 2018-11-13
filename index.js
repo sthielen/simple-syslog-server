@@ -48,16 +48,10 @@ Syslogd.prototype.close = function( callback ){
 	this.server.close( callback ) ;
 } ;
 
-var timeMaxLen = 'Dec 15 10:58:44'.length ;
-
 var Severity = {} ;
 'Emergency Alert Critical Error Warning Notice Informational Debug'.split(' ').forEach(function(x, i) {
 	Severity[x.toUpperCase()] = i ;
 }) ;
-
-exports.Severity = Severity ;
-
-var Facility = {} ; // to much
 
 function parsePRI(raw) {
 	// PRI means Priority, includes Facility and Severity
@@ -67,7 +61,7 @@ function parsePRI(raw) {
 	// To reverse
 	// Grab last 3 bits
 	var severity = parseInt(raw) % 8 ;
-	  // Shift last 3 bits to right (and throw away)
+	// Shift last 3 bits to right (and throw away)
 	var facility = parseInt(raw) >> 3 ;
 	return [facility, severity] ;
 }
@@ -80,16 +74,16 @@ function parser(msg, rinfo) {
 	var tagIndex = msg.indexOf(': ') ;
 	if( tagIndex == -1 ){
 		return {
-		    facility: undefined,
-		    severity: undefined,
-		    tag: undefined,
-		    time: new Date(),
-		    hostname: undefined,
-		    address: rinfo.address,
+			facility: undefined,
+			severity: undefined,
+			tag: undefined,
+			time: new Date(),
+			hostname: undefined,
+			address: rinfo.address,
 			family: rinfo.family,
 			port: rinfo.port,
 			size: rinfo.size,
-		    msg: msg
+			msg: msg
 		} ;
 	}
 	else {
@@ -168,13 +162,13 @@ StreamService.prototype.listen = function( port, callback ){
 	.on('error', function(err) {
 		debug('binding error: %o', err) ;
 		callback(err) ;
-	          // me.emit('error', {address: me.opt.address});
+		// me.emit('error', {address: me.opt.address});
 	})
 	.on('listening', function() {
 		debug('tcp binding ok') ;
 		me.port = server.address().port ;
 		callback(null, me) ;
-	        // me.emit('listening', {port: port, address: me.opt.address})
+		// me.emit('listening', {port: port, address: me.opt.address})
 	})
 	.listen( port, this.opt.address ) ;
 
@@ -244,11 +238,11 @@ FrameParser.prototype.check_framing = function(){
 	do {
 		if (this.frame_state == FRAME_TYPE_UNKNOWN)
 			continue_digesting = this.decide_on_frame_type() ;
-		 else if (this.frame_state == FRAME_TYPE_NEWLINE)
+		else if (this.frame_state == FRAME_TYPE_NEWLINE)
 			continue_digesting = this.check_newline_framing() ;
-		 else if (this.frame_state == FRAME_TYPE_OCTET)
+		else if (this.frame_state == FRAME_TYPE_OCTET)
 			continue_digesting = this.check_octet_frame() ;
-		 else
+		else
 			throw 'Invalid frame state' ;
 
 	}while( continue_digesting );

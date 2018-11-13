@@ -1,4 +1,4 @@
-// vim: set ft=javascript tabstop=4 softtabstop=4 shiftwidth=4 autoindent:
+/* eslint-disable no-unused-vars,no-undef */
 var assert = require('assert') ;
 let mocha = require( 'mocha' ) ;
 var net = require('net') ;
@@ -17,16 +17,16 @@ describe( 'given a TCP Syslog Server', () => {
 			info.address = null ;
 			info.family = null ;
 			var shouldRet = {
-				  facility: 22
-				, severity: 7
-				, tag: 'tag'
-				, time: new Date(time + ' ' + new Date().getFullYear())
-				, hostname: 'hostname'
-				, address: null
-				, family: null
-				, port: null
-				, size: testMsg.length
-				, msg: 'info'
+				facility: 22,
+				severity: 7,
+				tag: 'tag',
+				time: new Date(time + ' ' + new Date().getFullYear()),
+				hostname: 'hostname',
+				address: null,
+				family: null,
+				port: null,
+				size: testMsg.length,
+				msg: 'info'
 			} ;
 			assert.deepEqual(shouldRet, info) ;
 			done() ;
