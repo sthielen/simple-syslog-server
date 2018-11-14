@@ -5,7 +5,7 @@ let mocha = require('mocha') ;
 var Syslogd = require('../src/') ;
 
 describe('given a syslogd service', () => {
-	it('recieves and processes messages', (done) => {
+	it('receives and processes messages', (done) => {
 		var time = 'Dec 15 10:58:44' ;
 		var testMsg = '<183>' + time + ' hostname tag: info' ;
 		const port = 10514 ;
