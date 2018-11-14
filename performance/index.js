@@ -1,4 +1,4 @@
-var parser = require('../').parser ;
+var parser = require('../src/parser') ;
 
 console.time('performance') ;
 for (var i = 0 ; i < 500000 ; i++) {

@@ -18,8 +18,8 @@ describe('given severity codes', () => {
 			'Debug'
 		] ;
 
-		SEVERITY.forEach((severity,code) => {
-			assert.equal(Syslogd.severity(code),severity) ;
+		SEVERITY.forEach((severity, code) => {
+			assert.equal(Syslogd.severity(code), severity) ;
 		}) ;
 	}) ;
 }) ;
@@ -54,8 +54,8 @@ describe('given facility codes', () => {
 			'local use 7  (local7)'
 		] ;
 
-		FACILITY.forEach((facility,code) => {
-			assert.equal(Syslogd.facility(code),facility) ;
+		FACILITY.forEach((facility, code) => {
+			assert.equal(Syslogd.facility(code), facility) ;
 		}) ;
 	}) ;
 }) ;

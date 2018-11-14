@@ -1,6 +1,7 @@
 // vim: set ft=javascript tabstop=4 softtabstop=4 shiftwidth=4 autoindent:
 var dgram = require('dgram') ;
 var debug = require('debug')('syslogd') ;
+var util = require('util') ;
 var ConnectionState = require('./ConnectionState') ;
 var parser = require('./parser') ;
 
@@ -126,13 +127,23 @@ UDP.prototype.close = function(callback) {
 const net = require('net') ;
 const tls = require('tls') ;
 
-function TCP(messageReceived, options) {
-	return new StreamService(net, messageReceived, options) ;
+function TCP(callback, options) {
+	if(this instanceof TCP)
+		StreamService.call(this, net, callback, options) ;
+	else
+		return new TCP(callback, options) ;
 }
 
-function TLS(messageReceived, options) {
-	return new StreamService(tls, messageReceived, options) ;
+util.inherits(TCP, StreamService) ;
+
+function TLS(callback, options) {
+	if(this instanceof TLS)
+		StreamService.call(this, tls, callback, options) ;
+	else
+		return new TLS(callback, options) ;
 }
+
+util.inherits(TLS, StreamService) ;
 
 function StreamService(serviceModule, fn, opt) {
 	this.opt = opt || {} ;
@@ -152,8 +163,8 @@ function StreamService(serviceModule, fn, opt) {
 	return this ;
 }
 
-const util = require('util') ;
 const EventEmitter = require('events') ;
+
 util.inherits(StreamService, EventEmitter) ;
 
 StreamService.prototype.listen = function(port, callback) {
