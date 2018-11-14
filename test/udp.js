@@ -2,7 +2,7 @@
 var dgram = require('dgram') ;
 var assert = require('assert') ;
 let mocha = require('mocha') ;
-var Syslogd = require('../') ;
+var Syslogd = require('../src/') ;
 
 describe('given a syslogd service', () => {
 	it('recieves and processes messages', (done) => {
@@ -29,7 +29,7 @@ describe('given a syslogd service', () => {
 			server.close() ;
 			done() ;
 		}).listen(port, function(err) { // sudo
-			console.log('listen', err)
+			console.log('listen', err) ;
 			assert(!err) ;
 			var client = dgram.createSocket('udp4') ;
 			var buffer = new Buffer(testMsg) ;

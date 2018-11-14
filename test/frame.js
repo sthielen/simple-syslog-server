@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars,no-undef */
 let mocha = require( 'mocha' ) ;
 let assert = require('assert') ;
-let syslogd = require('../') ;
-let FrameParser = syslogd.FrameParser ;
+let syslogd = require('../src/index') ;
+let FrameParser = require('../src/FrameParser') ;
 
 describe( 'StreamFrameParser', () => {
 	var frames ;
