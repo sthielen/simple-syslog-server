@@ -53,6 +53,7 @@ function factory(transport) {
 	var args = Array.from(arguments) ;
 	// Throw away transport
 	args.shift() ;
+	transport = transport.toUpperCase() ;
 	if (transport in SERVICE)
 		return SERVICE[transport].apply(null, args) ;
 
