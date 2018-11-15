@@ -79,6 +79,19 @@ function severity(code) {
 
 }
 
+function Transport() {
+}
+
+Transport.prototype.on = function(event, cb) {
+	this.server.on(event, cb) ;
+	return this ;
+} ;
+
+Transport.prototype.close = function(callback) {
+	this.server.close(callback) ;
+} ;
+
+
 function UDP(fn, opt) {
 	if (!(this instanceof UDP))
 		return new UDP(fn, opt) ;
@@ -88,6 +101,8 @@ function UDP(fn, opt) {
 
 	this.server = dgram.createSocket('udp4') ;
 }
+
+util.inherits(UDP, Transport) ;
 
 UDP.prototype.listen = function(port, cb) {
 	var server = this.server ;
@@ -115,10 +130,6 @@ UDP.prototype.listen = function(port, cb) {
 	.bind(port, this.opt.address) ;
 
 	return this ;
-} ;
-
-UDP.prototype.close = function(callback) {
-	this.server.close(callback) ;
 } ;
 
 /*
@@ -152,7 +163,6 @@ function StreamService(serviceModule, fn, opt) {
 	this.server = serviceModule.createServer(this.opt, (connection) => {
 		debug('New connection from ' + connection.remoteAddress + ':' + connection.remotePort) ;
 		let state = new ConnectionState(this, connection) ;
-		this.emit('connection', {connection, state}) ;
 		connection.on('data', (buffer) => {
 			state.more_data(buffer) ;
 		}) ;
@@ -163,9 +173,7 @@ function StreamService(serviceModule, fn, opt) {
 	return this ;
 }
 
-const EventEmitter = require('events') ;
-
-util.inherits(StreamService, EventEmitter) ;
+util.inherits(StreamService, Transport) ;
 
 StreamService.prototype.listen = function(port, callback) {
 	var server = this.server ;
@@ -177,22 +185,17 @@ StreamService.prototype.listen = function(port, callback) {
 	.on('error', function(err) {
 		debug('binding error: %o', err) ;
 		callback(err) ;
-		// me.emit('error', {address: me.opt.address});
 	})
 	.on('listening', function() {
 		debug('tcp binding ok') ;
 		me.port = server.address().port ;
 		callback(null, me) ;
-		// me.emit('listening', {port: port, address: me.opt.address})
 	})
 	.listen(port, this.opt.address) ;
 
 	return this ;
 } ;
 
-StreamService.prototype.close = function(callback) {
-	this.server.close(callback) ;
-} ;
 module.exports.facility = facility ;
 module.exports.severity = severity ;
 module.exports.UDP = UDP ;
