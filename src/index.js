@@ -160,15 +160,19 @@ util.inherits(TLS, StreamService) ;
 function StreamService(serviceModule, fn, opt) {
 	this.opt = opt || {} ;
 	this.handler = fn ;
+	this.connections = {} ;
 
 	this.server = serviceModule.createServer(this.opt, (connection) => {
-		debug('New connection from ' + connection.remoteAddress + ':' + connection.remotePort) ;
+		var client = connection.remoteAddress + ':' + connection.remotePort ;
+		this.connections[client] = connection ;
+		debug('New connection from ' + client) ;
 		let state = new ConnectionState(this, connection) ;
 		connection.on('data', (buffer) => {
 			state.more_data(buffer) ;
 		}) ;
 		connection.on('end', () => {
 			state.closed() ;
+			delete this.connections[client] ;
 		}) ;
 	}) ;
 	return this ;
@@ -196,6 +200,18 @@ StreamService.prototype.listen = function(port, callback) {
 
 	return this ;
 } ;
+
+StreamService.prototype.close = function(callback) {
+	Transport.prototype.close.call(this, callback) ;
+	for (var c in this.connections) {
+		this.connections[c].end() ;
+	}
+
+
+	this.connections = {} ;
+} ;
+
+
 
 module.exports.facility = facility ;
 module.exports.severity = severity ;
