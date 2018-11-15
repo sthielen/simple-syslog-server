@@ -1,5 +1,6 @@
 var FrameParser = require('./FrameParser') ;
 var parser = require('./parser') ;
+var debug = require('debug')('syslogd') ;
 
 function ConnectionState(service, connection) {
 	this.service = service ;
@@ -24,7 +25,7 @@ ConnectionState.prototype.dispatch_message = function(frame) {
 		port: this.info.port,
 		size: frame.length
 	} ;
-	console.log(`raw:${frame}`) ;
+	debug(`raw:${frame}`) ;
 	let message = parser(frame, clientInfo) ;
 	this.service.handler(message) ;
 } ;
