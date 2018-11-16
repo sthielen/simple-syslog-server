@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars,no-undef */
 var dgram = require('dgram') ;
 var assert = require('assert') ;
-let mocha = require('mocha') ;
+var mocha = require('mocha') ;
 var Syslogd = require('../src/') ;
 
 describe('given severity codes', () => {

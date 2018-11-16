@@ -1,7 +1,7 @@
 
-let FRAME_TYPE_UNKNOWN = 0 ;
-let FRAME_TYPE_NEWLINE = 1 ;
-let FRAME_TYPE_OCTET = 2 ;
+var FRAME_TYPE_UNKNOWN = 0 ;
+var FRAME_TYPE_NEWLINE = 1 ;
+var FRAME_TYPE_OCTET = 2 ;
 
 function FrameParser(callback) {
 	this.buffer = Buffer.from('') ;
@@ -22,7 +22,7 @@ FrameParser.prototype.done = function() {
 } ;
 
 FrameParser.prototype.check_framing = function() {
-	let continue_digesting ;
+	var continue_digesting ;
 	do {
 		if (this.frame_state == FRAME_TYPE_UNKNOWN)
 			continue_digesting = this.decide_on_frame_type() ;
@@ -42,16 +42,16 @@ FrameParser.prototype.decide_on_frame_type = function() {
 		return false ;
 
 	// shrink our check buffer
-	let check = this.buffer.slice(0, 8) ;
+	var check = this.buffer.slice(0, 8) ;
 	// Do we have spaces?
-	let space = check.indexOf(' ') ;
+	var space = check.indexOf(' ') ;
 	if (space == -1) {
 		this.frame_state = FRAME_TYPE_NEWLINE ;
 		return true ;
 	}
 
 	// Check output if we can convert it to a number
-	let size = parseInt(check.slice(0, space), 10) ;
+	var size = parseInt(check.slice(0, space), 10) ;
 	if (isNaN(size) || size < 2) {
 		this.frame_state = FRAME_TYPE_NEWLINE ;
 		return true ;
@@ -65,7 +65,7 @@ FrameParser.prototype.decide_on_frame_type = function() {
 } ;
 
 FrameParser.prototype.check_newline_framing = function() {
-	let indexOfNewLine = this.buffer.indexOf('\n') ;
+	var indexOfNewLine = this.buffer.indexOf('\n') ;
 	if (indexOfNewLine == -1) return false ;
 
 	const frame = this.buffer.slice(0, indexOfNewLine) ;
@@ -75,12 +75,12 @@ FrameParser.prototype.check_newline_framing = function() {
 } ;
 
 FrameParser.prototype.check_octet_frame = function() {
-	let size = this.octets ;
+	var size = this.octets ;
 	if (!size) throw 'Not currently in octet strategy' ;
 
 	if (this.buffer.length < size) return false ;
 
-	let frame = this.buffer.slice(0, size) ;
+	var frame = this.buffer.slice(0, size) ;
 	this.buffer = this.buffer.slice(size) ;
 
 	return this._emit_and_reset(frame) ;

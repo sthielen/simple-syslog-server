@@ -114,19 +114,19 @@ UDP.prototype.listen = function(port, cb) {
 	debug('try bind to %s', port) ;
 	cb = cb || noop ;
 	this.port = port || 514 ; // default is 514
-	var me = this ;
+
 	server
-	.on('error', function(err) {
+	.on('error', err => {
 		debug('binding error: %o', err) ;
 		cb(err) ;
 	})
-	.on('listening', function() {
+	.on('listening', () => {
 		debug('binding ok') ;
 		cb(null) ;
 	})
-	.on('message', function(msg, rinfo) {
+	.on('message', (msg, rinfo) => {
 		var info = parser(msg, rinfo) ;
-		me.handler(info) ;
+		this.handler(info) ;
 	})
 	.bind(port, this.opt.address) ;
 
@@ -166,7 +166,7 @@ function StreamService(serviceModule, fn, opt) {
 		var client = connection.remoteAddress + ':' + connection.remotePort ;
 		this.connections[client] = connection ;
 		debug('New connection from ' + client) ;
-		let state = new ConnectionState(this, connection) ;
+		var state = new ConnectionState(this, connection) ;
 		connection.on('data', (buffer) => {
 			state.more_data(buffer) ;
 		}) ;
@@ -185,16 +185,16 @@ StreamService.prototype.listen = function(port, callback) {
 	callback = callback || noop ;
 	this.port = port || 514 ; // default is 514
 	debug('Binding to ' + this.port) ;
-	var me = this ;
+
 	server
-	.on('error', function(err) {
+	.on('error', err => {
 		debug('binding error: %o', err) ;
 		callback(err) ;
 	})
-	.on('listening', function() {
+	.on('listening', () => {
 		debug('tcp binding ok') ;
-		me.port = server.address().port ;
-		callback(null, me) ;
+		this.port = server.address().port ;
+		callback(null, this) ;
 	})
 	.listen(port, this.opt.address) ;
 
@@ -203,10 +203,8 @@ StreamService.prototype.listen = function(port, callback) {
 
 StreamService.prototype.close = function(callback) {
 	Transport.prototype.close.call(this, callback) ;
-	for (var c in this.connections) {
+	for (var c in this.connections) 
 		this.connections[c].end() ;
-	}
-
 
 	this.connections = {} ;
 } ;

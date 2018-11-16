@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars,no-undef */
-let mocha = require( 'mocha' ) ;
-let assert = require('assert') ;
-let syslogd = require('../src/index') ;
-let FrameParser = require('../src/FrameParser') ;
+var mocha = require( 'mocha' ) ;
+var assert = require('assert') ;
+var syslogd = require('../src/index') ;
+var FrameParser = require('../src/FrameParser') ;
 
 describe( 'StreamFrameParser', () => {
 	var frames ;
@@ -109,7 +109,7 @@ describe( 'StreamFrameParser', () => {
 	describe( 'when given an octet counted frame', () => {
 		const message = '<12>1 2017-05-26T14:05:00.000Z host proc 42 - - - Some message' ;
 		beforeEach( () => {
-			let length = message.length ;
+			var length = message.length ;
 			parser.feed( Buffer.from( length + ' ' + message ) ) ;
 		}) ;
 

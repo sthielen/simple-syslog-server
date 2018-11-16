@@ -1,12 +1,12 @@
 /* eslint-disable no-undef */
 var assert = require('assert') ;
 // eslint-disable-next-line no-unused-vars
-let mocha = require( 'mocha' ) ;
-let tls = require('tls') ;
-let selfsigned = require( 'selfsigned' ) ;
+var mocha = require( 'mocha' ) ;
+var tls = require('tls') ;
+var selfsigned = require( 'selfsigned' ) ;
 
-let attributes = [{ name: 'commonName', value: 'localhost' }] ;
-let x509 = selfsigned.generate( attributes, { days: 2 } ) ;
+var attributes = [{ name: 'commonName', value: 'localhost' }] ;
+var x509 = selfsigned.generate( attributes, { days: 2 } ) ;
 
 describe( 'given a TLS Syslog Server', () => {
 	it( 'Receives TLS/TCP/IP messages', (done) => {
@@ -22,7 +22,7 @@ describe( 'given a TLS Syslog Server', () => {
 			ca: [ x509['cert'] ]
 		} ;
 
-		var server = StreamSyslogd(function(info) {
+		var server = StreamSyslogd( info => {
 			info.port = null ; // port is random
 			info.address = null ;
 			info.family = null ;
@@ -41,18 +41,18 @@ describe( 'given a TLS Syslog Server', () => {
 			assert.deepEqual(shouldRet, info) ;
 			server.close() ;
 			done() ;
-		}, options ).listen( port, function(err, service ) { // sudo
+		}, options ).listen( port, (err, service ) => { // sudo
 			//This is required because NodeJS is really strange about self signed certificates.
 			function identity_check( host, cert ){
-				let cn = cert.subject.CN ;
+				var cn = cert.subject.CN ;
 				return host == cn ? undefined : new Error( 'subject mistmatch: host ${host} and CN ${cn}' ) ;
 			}
 
 			assert.ifError( err ) ;
 			var buffer = new Buffer(testMsg) ;
-			var client = tls.connect( service.port, 'localhost', { checkServerIdentity: identity_check, ca: [ x509['cert'] ] }, function() {
+			var client = tls.connect( service.port, 'localhost', { checkServerIdentity: identity_check, ca: [ x509['cert'] ] }, () => {
 				// eslint-disable-next-line no-unused-vars
-				client.write(buffer, function(err, bytes) {
+				client.write(buffer, (err, bytes) => {
 					assert.ifError( err ) ;
 					client.end() ;
 				}) ;

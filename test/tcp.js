@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars,no-undef */
 var assert = require('assert') ;
-let mocha = require( 'mocha' ) ;
+var mocha = require( 'mocha' ) ;
 var net = require('net') ;
 
 describe( 'given a TCP Syslog Server', () => {
@@ -31,11 +31,11 @@ describe( 'given a TCP Syslog Server', () => {
 			assert.deepEqual(shouldRet, info) ;
 			server.close() ;
 			done() ;
-		}).listen( port, function(err, service ) { // sudo
+		}).listen( port, (err, service ) => { // sudo
 			assert.ifError( err ) ;
 			var buffer = new Buffer(testMsg) ;
 			var client = net.connect( service.port, 'localhost', function() {
-				client.write(buffer, function(err, bytes) {
+				client.write(buffer, (err, bytes) => {
 					assert.ifError( err ) ;
 					client.end() ;
 				}) ;

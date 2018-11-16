@@ -19,14 +19,14 @@ ConnectionState.prototype.more_data = function(buffer) {
 } ;
 
 ConnectionState.prototype.dispatch_message = function(frame) {
-	let clientInfo = {
+	var clientInfo = {
 		address: this.info.address,
 		family: this.info.family,
 		port: this.info.port,
 		size: frame.length
 	} ;
 	debug(`raw:${frame}`) ;
-	let message = parser(frame, clientInfo) ;
+	var message = parser(frame, clientInfo) ;
 	this.service.handler(message) ;
 } ;
 
