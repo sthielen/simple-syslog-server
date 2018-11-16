@@ -1,7 +1,7 @@
 {
   "name": "syslogd",
-  "version": "2.0.0",
-  "description": "syslog server and parser",
+  "version": "1.0.0",
+  "description": "A simple evented syslog server supporting UDP, TCP & TLS Transports",
   "main": "src/index.js",
   "directories": {
     "test": "test"
@@ -16,8 +16,12 @@
     "parser",
     "server"
   ],
-  "author": "ft",
-  "license": "ISC",
+  "author": {
+    "name": "Damien Clark",
+    "email": "damo.clarky@gmail.com",
+    "url": "https://damos.world"
+  },
+  "license": "Apache-2.0",
   "dependencies": {
     "debug": "^2.1.0"
   },
@@ -28,12 +32,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/chunpu/syslogd.git"
+    "url": "https://github.com/damoclark/syslogd.git"
   },
   "bugs": {
-    "url": "https://github.com/chunpu/syslogd/issues"
+    "url": "https://github.com/damoclark/syslogd/issues"
   },
-  "homepage": "https://github.com/chunpu/syslogd",
+  "homepage": "https://github.com/damoclark/syslogd",
   "engines": {
     "node": ">=6.0.0"
   }
