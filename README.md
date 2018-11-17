@@ -21,7 +21,7 @@ Syslog(function(info) {
         facility: 7
       , severity: 22
       , tag: 'tag'
-      , time: Mon Dec 15 2014 10:58:44 GMT-0800 (PST)
+      , timestamp: Mon Dec 15 2014 10:58:44 GMT-0800 (PST)
       , hostname: 'hostname'
       , address: '127.0.0.1'
       , family: 'IPv4'

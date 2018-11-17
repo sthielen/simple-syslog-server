@@ -13,8 +13,8 @@ describe( 'given a TLS Syslog Server', () => {
 		const StreamSyslogd = require('../src/').TLS ;
 		assert( StreamSyslogd, 'TLSStreamService not defined' ) ;
 
-		var time = 'Dec 15 10:58:44' ;
-		var testMsg = '<183>' + time + ' hostname tag: info' ;
+		var timestamp = 'Dec 15 10:58:44' ;
+		var testMsg = '<183>' + timestamp + ' hostname tag: info' ;
 		const port = 0 ;
 		const options = {
 			key: x509['private'],
@@ -30,7 +30,7 @@ describe( 'given a TLS Syslog Server', () => {
 				facility: 22,
 				severity: 7,
 				tag: 'tag',
-				time: new Date(time + ' ' + new Date().getFullYear()),
+				timestamp: new Date(timestamp + ' ' + new Date().getFullYear()),
 				hostname: 'hostname',
 				address: null,
 				family: null,

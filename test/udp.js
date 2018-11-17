@@ -6,8 +6,8 @@ var Syslog = require('../src/') ;
 
 describe('given a simple-syslog-server', () => {
 	it('receives and processes messages', (done) => {
-		var time = 'Dec 15 10:58:44' ;
-		var testMsg = '<183>' + time + ' hostname tag: info' ;
+		var timestamp = 'Dec 15 10:58:44' ;
+		var testMsg = '<183>' + timestamp + ' hostname tag: info' ;
 		const port = 10514 ;
 
 		var server = Syslog.UDP( info => {
@@ -17,7 +17,7 @@ describe('given a simple-syslog-server', () => {
 				facility: 22,
 				severity: 7,
 				tag: 'tag',
-				time: new Date(time + ' ' + new Date().getFullYear()),
+				timestamp: new Date(timestamp + ' ' + new Date().getFullYear()),
 				hostname: 'hostname',
 				address: '127.0.0.1',
 				family: 'IPv4',
