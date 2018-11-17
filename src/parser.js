@@ -11,7 +11,6 @@ function parsePRI(raw) {
 	return [facility, severity] ;
 }
 
-// TODO Optimise parser https://sematext.com/blog/what-is-syslog-daemons-message-formats-and-protocols/
 function parser(msg, rinfo) {
 	// https://tools.ietf.org/html/rfc5424
 	// e.g. <PRI>timestamp hostname tag: info
