@@ -1,6 +1,6 @@
 // vim: set ft=javascript tabstop=4 softtabstop=4 shiftwidth=4 autoindent:
 var dgram = require('dgram') ;
-var debug = require('debug')('syslogd') ;
+var debug = require('debug')('simple-syslog-server') ;
 var util = require('util') ;
 var ConnectionState = require('./ConnectionState') ;
 var parser = require('./parser') ;

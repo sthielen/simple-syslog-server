@@ -2,15 +2,15 @@
 var dgram = require('dgram') ;
 var assert = require('assert') ;
 var mocha = require('mocha') ;
-var Syslogd = require('../src/') ;
+var Syslog = require('../src/') ;
 
-describe('given a syslogd service', () => {
-	it('recieves and processes messages', (done) => {
+describe('given a simple-syslog-server', () => {
+	it('receives and processes messages', (done) => {
 		var time = 'Dec 15 10:58:44' ;
 		var testMsg = '<183>' + time + ' hostname tag: info' ;
 		const port = 10514 ;
 
-		var server = Syslogd.UDP( info => {
+		var server = Syslog.UDP( info => {
 			//console.log(info)
 			info.port = null ; // port is random
 			var shouldRet = {

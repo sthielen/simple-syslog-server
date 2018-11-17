@@ -2,7 +2,7 @@
 var dgram = require('dgram') ;
 var assert = require('assert') ;
 var mocha = require('mocha') ;
-var Syslogd = require('../src/') ;
+var Syslog = require('../src/') ;
 
 describe('given severity codes', () => {
 	it('returns the correct description', () => {
@@ -19,7 +19,7 @@ describe('given severity codes', () => {
 		] ;
 
 		SEVERITY.forEach((severity, code) => {
-			assert.equal(Syslogd.severity(code), severity) ;
+			assert.equal(Syslog.severity(code), severity) ;
 		}) ;
 	}) ;
 }) ;
@@ -55,7 +55,7 @@ describe('given facility codes', () => {
 		] ;
 
 		FACILITY.forEach((facility, code) => {
-			assert.equal(Syslogd.facility(code), facility) ;
+			assert.equal(Syslog.facility(code), facility) ;
 		}) ;
 	}) ;
 }) ;

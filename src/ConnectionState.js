@@ -1,6 +1,6 @@
 var FrameParser = require('./FrameParser') ;
 var parser = require('./parser') ;
-var debug = require('debug')('syslogd') ;
+var debug = require('debug')('simple-syslog-server') ;
 
 function ConnectionState(service, connection) {
 	this.service = service ;
