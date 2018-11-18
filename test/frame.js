@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars,no-undef */
-const mocha = require( 'mocha' ) ;
+const mocha = require('mocha') ;
 const assert = require('assert') ;
 const FrameParser = require('../src/FrameParser') ;
 
@@ -23,7 +23,7 @@ describe( 'StreamFrameParser', () => {
 
 	describe( 'given a complete new line frame', () => {
 		beforeEach( () => {
-			parser.feed( Buffer.from( 'nontransparent newline\n' ) ) ;
+			parser.feed( Buffer.from('nontransparent newline\n') ) ;
 		}) ;
 
 		it( 'adds a frame', () => {
@@ -42,7 +42,7 @@ describe( 'StreamFrameParser', () => {
 
 	describe( 'when given a partial new line frame', () => {
 		beforeEach( () => {
-			parser.feed( Buffer.from( 'not done' ) ) ;
+			parser.feed( Buffer.from('not done') ) ;
 		}) ;
 
 		it( 'does not emit the frame yet', () => {
@@ -51,7 +51,7 @@ describe( 'StreamFrameParser', () => {
 
 		describe( 'when given the completed part',  () => {
 			beforeEach( () => {
-				parser.feed( Buffer.from( ' yet\n' ) ) ;
+				parser.feed( Buffer.from(' yet\n') ) ;
 			}) ;
 
 			it( 'completes the frame', () => {
@@ -64,7 +64,7 @@ describe( 'StreamFrameParser', () => {
 
 		describe( 'when finished with additional frames', () => {
 			beforeEach( () => {
-				parser.feed( Buffer.from( 'here\nwith another\nframe' ) ) ; 
+				parser.feed( Buffer.from('here\nwith another\nframe') ) ;
 			}) ;
 
 			it( 'it only completed two frames', () => {
@@ -93,7 +93,7 @@ describe( 'StreamFrameParser', () => {
 
 	describe( 'when given multiple new line frames', () => {
 		beforeEach( () => {
-			parser.feed( Buffer.from( 'multiple frames\nwithin a single\nbuffer' ) ) ;
+			parser.feed( Buffer.from('multiple frames\nwithin a single\nbuffer') ) ;
 		} ) ;
 
 		it( 'emits all frames', () => {

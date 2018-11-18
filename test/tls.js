@@ -1,9 +1,9 @@
 /* eslint-disable no-undef */
 const assert = require('assert') ;
 // eslint-disable-next-line no-unused-vars
-const mocha = require( 'mocha' ) ;
+const mocha = require('mocha') ;
 const tls = require('tls') ;
-const selfsigned = require( 'selfsigned' ) ;
+const selfsigned = require('selfsigned') ;
 
 let attributes = [{ name: 'commonName', value: 'localhost' }] ;
 let x509 = selfsigned.generate( attributes, { days: 2 } ) ;
@@ -45,7 +45,7 @@ describe( 'given a TLS Syslog Server', () => {
 			//This is required because NodeJS is really strange about self signed certificates.
 			function identity_check( host, cert ){
 				let cn = cert.subject.CN ;
-				return host == cn ? undefined : new Error( 'subject mistmatch: host ${host} and CN ${cn}' ) ;
+				return host == cn ? undefined : new Error('subject mistmatch: host ${host} and CN ${cn}') ;
 			}
 
 			assert.ifError( err ) ;
