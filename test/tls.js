@@ -1,20 +1,20 @@
 /* eslint-disable no-undef */
-var assert = require('assert') ;
+const assert = require('assert') ;
 // eslint-disable-next-line no-unused-vars
-var mocha = require( 'mocha' ) ;
-var tls = require('tls') ;
-var selfsigned = require( 'selfsigned' ) ;
+const mocha = require( 'mocha' ) ;
+const tls = require('tls') ;
+const selfsigned = require( 'selfsigned' ) ;
 
-var attributes = [{ name: 'commonName', value: 'localhost' }] ;
-var x509 = selfsigned.generate( attributes, { days: 2 } ) ;
+let attributes = [{ name: 'commonName', value: 'localhost' }] ;
+let x509 = selfsigned.generate( attributes, { days: 2 } ) ;
 
 describe( 'given a TLS Syslog Server', () => {
 	it( 'Receives TLS/TCP/IP messages', (done) => {
 		const StreamSyslogd = require('../src/').TLS ;
 		assert( StreamSyslogd, 'TLSStreamService not defined' ) ;
 
-		var timestamp = 'Dec 15 10:58:44' ;
-		var testMsg = '<183>' + timestamp + ' hostname tag: info' ;
+		const timestamp = 'Dec 15 10:58:44' ;
+		const testMsg = '<183>' + timestamp + ' hostname tag: info' ;
 		const options = { port: 0 } ;
 		const tls_options = {
 			key: x509['private'],
@@ -22,11 +22,11 @@ describe( 'given a TLS Syslog Server', () => {
 			ca: [ x509['cert'] ]
 		} ;
 
-		var server = StreamSyslogd(tls_options, info => {
+		let server = StreamSyslogd(tls_options, info => {
 			info.port = null ; // port is random
 			info.address = null ;
 			info.family = null ;
-			var shouldRet = {
+			let shouldRet = {
 				facility: 22,
 				severity: 7,
 				tag: 'tag',
@@ -44,13 +44,13 @@ describe( 'given a TLS Syslog Server', () => {
 		}).listen( options, (err, service ) => { // sudo
 			//This is required because NodeJS is really strange about self signed certificates.
 			function identity_check( host, cert ){
-				var cn = cert.subject.CN ;
+				let cn = cert.subject.CN ;
 				return host == cn ? undefined : new Error( 'subject mistmatch: host ${host} and CN ${cn}' ) ;
 			}
 
 			assert.ifError( err ) ;
-			var buffer = new Buffer(testMsg) ;
-			var client = tls.connect( service.port, 'localhost', { checkServerIdentity: identity_check, ca: [ x509['cert'] ] }, () => {
+			let buffer = new Buffer(testMsg) ;
+			let client = tls.connect( service.port, 'localhost', { checkServerIdentity: identity_check, ca: [ x509['cert'] ] }, () => {
 				// eslint-disable-next-line no-unused-vars
 				client.write(buffer, (err, bytes) => {
 					assert.ifError( err ) ;

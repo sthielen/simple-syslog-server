@@ -1,6 +1,6 @@
-var FrameParser = require('./FrameParser') ;
-var parser = require('./parser') ;
-var debug = require('debug')('simple-syslog-server') ;
+const FrameParser = require('./FrameParser') ;
+const parser = require('./parser') ;
+const debug = require('debug')('simple-syslog-server') ;
 
 function ConnectionState(service, connection) {
 	this.service = service ;
@@ -19,14 +19,14 @@ ConnectionState.prototype.more_data = function(buffer) {
 } ;
 
 ConnectionState.prototype.dispatch_message = function(frame) {
-	var clientInfo = {
+	let clientInfo = {
 		address: this.info.address,
 		family: this.info.family,
 		port: this.info.port,
 		size: frame.length
 	} ;
 	debug(`raw:${frame}`) ;
-	var message = parser(frame, clientInfo) ;
+	let message = parser(frame, clientInfo) ;
 	this.service.handler(message) ;
 } ;
 

@@ -5,9 +5,9 @@ function parsePRI(raw) {
 
 	// To reverse
 	// Grab last 3 bits
-	var severity = parseInt(raw) % 8 ;
+	let severity = parseInt(raw) % 8 ;
 	// Shift last 3 bits to right (and throw away)
-	var facility = parseInt(raw) >> 3 ;
+	let facility = parseInt(raw) >> 3 ;
 	return [facility, severity] ;
 }
 
@@ -15,7 +15,7 @@ function parser(msg, rinfo) {
 	// https://tools.ietf.org/html/rfc5424
 	// e.g. <PRI>timestamp hostname tag: info
 	msg = msg + '' ;
-	var tagIndex = msg.indexOf(': ') ;
+	let tagIndex = msg.indexOf(': ') ;
 	if (tagIndex == -1) {
 		return {
 			facility: undefined,
@@ -31,16 +31,16 @@ function parser(msg, rinfo) {
 		} ;
 	}
 
-	var format = msg.substr(0, tagIndex) ;
-	var priIndex = format.indexOf('>') ;
-	var pri = format.substr(1, priIndex - 1) ;
+	let format = msg.substr(0, tagIndex) ;
+	let priIndex = format.indexOf('>') ;
+	let pri = format.substr(1, priIndex - 1) ;
 	pri = parsePRI(pri) ;
-	var lastSpaceIndex = format.lastIndexOf(' ') ;
-	var tag = format.substr(lastSpaceIndex + 1) ;
-	var last2SpaceIndex = format.lastIndexOf(' ', lastSpaceIndex - 1) ; // hostname cannot contain ' '
-	var hostname = format.substring(last2SpaceIndex + 1, lastSpaceIndex) ;
+	let lastSpaceIndex = format.lastIndexOf(' ') ;
+	let tag = format.substr(lastSpaceIndex + 1) ;
+	let last2SpaceIndex = format.lastIndexOf(' ', lastSpaceIndex - 1) ; // hostname cannot contain ' '
+	let hostname = format.substring(last2SpaceIndex + 1, lastSpaceIndex) ;
 	// timestamp is complex because don't know if it has year
-	var timestamp = format.substring(priIndex + 1, last2SpaceIndex) ;
+	let timestamp = format.substring(priIndex + 1, last2SpaceIndex) ;
 	timestamp = new Date(timestamp) ;
 	timestamp.setYear(new Date().getFullYear()) ; // fix year to now
 	return {

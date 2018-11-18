@@ -1,13 +1,13 @@
 /* eslint-disable no-unused-vars,no-undef */
-var dgram = require('dgram') ;
-var assert = require('assert') ;
-var mocha = require('mocha') ;
-var Syslog = require('../src/') ;
+const dgram = require('dgram') ;
+const assert = require('assert') ;
+const mocha = require('mocha') ;
+const Syslog = require('../src/') ;
 
 describe('given severity codes', () => {
 	it('returns the correct description', () => {
 
-		var SEVERITY = [
+		const SEVERITY = [
 			'Emergency',
 			'Alert',
 			'Critical',
@@ -27,7 +27,7 @@ describe('given severity codes', () => {
 describe('given facility codes', () => {
 	it('returns the correct description', () => {
 
-		var FACILITY = [
+		const FACILITY = [
 			'kern',
 			'user',
 			'mail',

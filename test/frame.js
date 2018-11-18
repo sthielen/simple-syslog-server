@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars,no-undef */
-var mocha = require( 'mocha' ) ;
-var assert = require('assert') ;
-var FrameParser = require('../src/FrameParser') ;
+const mocha = require( 'mocha' ) ;
+const assert = require('assert') ;
+const FrameParser = require('../src/FrameParser') ;
 
 describe( 'StreamFrameParser', () => {
-	var frames ;
-	var parser ;
+	let frames ;
+	let parser ;
 
 	beforeEach( () => {
 		frames = [] ;
@@ -108,7 +108,7 @@ describe( 'StreamFrameParser', () => {
 	describe( 'when given an octet counted frame', () => {
 		const message = '<12>1 2017-05-26T14:05:00.000Z host proc 42 - - - Some message' ;
 		beforeEach( () => {
-			var length = message.length ;
+			let length = message.length ;
 			parser.feed( Buffer.from( length + ' ' + message ) ) ;
 		}) ;
 
@@ -141,8 +141,8 @@ describe( 'StreamFrameParser', () => {
 	describe( 'given given a really large frame', () => {
 		const count = 2500 ;
 		beforeEach( () => {
-			var output = Buffer.from('') ;
-			for( var i = 0 ; i < count ; i++)
+			let output = Buffer.from('') ;
+			for( let i = 0 ; i < count ; i++)
 				output = Buffer.concat([output, Buffer.from('Test ' + i + '\n', 'utf-8')]) ;
 			
 			parser.feed( output ) ;

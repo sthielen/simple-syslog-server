@@ -1,19 +1,19 @@
 /* eslint-disable no-unused-vars,no-undef */
-var dgram = require('dgram') ;
-var assert = require('assert') ;
-var mocha = require('mocha') ;
-var Syslog = require('../src/') ;
+const dgram = require('dgram') ;
+const assert = require('assert') ;
+const mocha = require('mocha') ;
+const Syslog = require('../src/') ;
 
 describe('given a simple-syslog-server', () => {
 	it('receives and processes messages', (done) => {
-		var timestamp = 'Dec 15 10:58:44' ;
-		var testMsg = '<183>' + timestamp + ' hostname tag: info' ;
+		const timestamp = 'Dec 15 10:58:44' ;
+		const testMsg = '<183>' + timestamp + ' hostname tag: info' ;
 		const options = { port: 10514 } ;
 
-		var server = Syslog.UDP( null, info => {
+		let server = Syslog.UDP( null, info => {
 			//console.log(info)
 			info.port = null ; // port is random
-			var shouldRet = {
+			let shouldRet = {
 				facility: 22,
 				severity: 7,
 				tag: 'tag',
@@ -32,8 +32,8 @@ describe('given a simple-syslog-server', () => {
 			if(err)
 				console.log('listen', err) ;
 			assert(!err) ;
-			var client = dgram.createSocket('udp4') ;
-			var buffer = new Buffer(testMsg) ;
+			let client = dgram.createSocket('udp4') ;
+			let buffer = new Buffer(testMsg) ;
 			client.send(buffer, 0, buffer.length, options.port, 'localhost', (err, bytes) => {
 				//console.log('send', err, bytes)
 			}) ;

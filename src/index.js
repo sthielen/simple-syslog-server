@@ -1,11 +1,11 @@
 // vim: set ft=javascript tabstop=4 softtabstop=4 shiftwidth=4 autoindent:
-var dgram = require('dgram') ;
-var debug = require('debug')('simple-syslog-server') ;
-var util = require('util') ;
-var ConnectionState = require('./ConnectionState') ;
-var parser = require('./parser') ;
+const dgram = require('dgram') ;
+const debug = require('debug')('simple-syslog-server') ;
+const util = require('util') ;
+const ConnectionState = require('./ConnectionState') ;
+const parser = require('./parser') ;
 
-var SEVERITY = [
+const SEVERITY = [
 	'Emergency',
 	'Alert',
 	'Critical',
@@ -16,7 +16,7 @@ var SEVERITY = [
 	'Debug'
 ] ;
 
-var FACILITY = [
+const FACILITY = [
 	'kern',
 	'user',
 	'mail',
@@ -43,7 +43,7 @@ var FACILITY = [
 	'local7',
 ] ;
 
-var SERVICE = {
+const SERVICE = {
 	'UDP': UDP,
 	'TCP': TCP,
 	'TLS': TLS
@@ -104,7 +104,7 @@ function UDP(options, cb) {
 util.inherits(UDP, Transport) ;
 
 UDP.prototype.listen = function(options, cb) {
-	var server = this.server ;
+	let server = this.server ;
 	options = options || { port: 514 } ; // default is 514
 	this.transport = options ;
 
@@ -126,7 +126,7 @@ UDP.prototype.listen = function(options, cb) {
 		cb(null) ;
 	})
 	.on('message', (msg, rinfo) => {
-		var info = parser(msg, rinfo) ;
+		let info = parser(msg, rinfo) ;
 		this.handler(info) ;
 	})
 	.bind(options) ;
@@ -164,10 +164,10 @@ function StreamService(serviceModule, options, cb) {
 	this.connections = {} ;
 
 	this.server = serviceModule.createServer(this.opt, (connection) => {
-		var client = connection.remoteAddress + ':' + connection.remotePort ;
+		let client = connection.remoteAddress + ':' + connection.remotePort ;
 		this.connections[client] = connection ;
 		debug('New connection from ' + client) ;
-		var state = new ConnectionState(this, connection) ;
+		let state = new ConnectionState(this, connection) ;
 		connection.on('data', (buffer) => {
 			state.more_data(buffer) ;
 		}) ;
@@ -182,7 +182,7 @@ function StreamService(serviceModule, options, cb) {
 util.inherits(StreamService, Transport) ;
 
 StreamService.prototype.listen = function(options, cb) {
-	var server = this.server ;
+	let server = this.server ;
 	cb = cb || noop ;
 	options = options || { port: 514 } ; // default is 514
 	this.transport = options ;
@@ -207,7 +207,7 @@ StreamService.prototype.listen = function(options, cb) {
 
 StreamService.prototype.close = function(cb) {
 	Transport.prototype.close.call(this, cb) ;
-	for (var c in this.connections) 
+	for (let c in this.connections)
 		this.connections[c].end() ;
 
 	this.connections = {} ;
