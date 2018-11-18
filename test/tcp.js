@@ -10,9 +10,9 @@ describe( 'given a TCP Syslog Server', () => {
 
 		var timestamp = 'Dec 15 10:58:44' ;
 		var testMsg = '<183>' + timestamp + ' hostname tag: info' ;
-		const port = 0 ;
+		const options = { port: 0 } ;
 
-		var server = StreamSyslogd(function(info) {
+		var server = StreamSyslogd(null, function(info) {
 			info.port = null ; // port is random
 			info.address = null ;
 			info.family = null ;
@@ -31,10 +31,10 @@ describe( 'given a TCP Syslog Server', () => {
 			assert.deepEqual(shouldRet, info) ;
 			server.close() ;
 			done() ;
-		}).listen( port, (err, service ) => { // sudo
+		}).listen( options, (err, service ) => { // sudo
 			assert.ifError( err ) ;
 			var buffer = new Buffer(testMsg) ;
-			var client = net.connect( service.port, 'localhost', function() {
+			var client = net.connect( options, function() {
 				client.write(buffer, (err, bytes) => {
 					assert.ifError( err ) ;
 					client.end() ;

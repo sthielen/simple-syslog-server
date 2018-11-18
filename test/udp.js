@@ -8,9 +8,9 @@ describe('given a simple-syslog-server', () => {
 	it('receives and processes messages', (done) => {
 		var timestamp = 'Dec 15 10:58:44' ;
 		var testMsg = '<183>' + timestamp + ' hostname tag: info' ;
-		const port = 10514 ;
+		const options = { port: 10514 } ;
 
-		var server = Syslog.UDP( info => {
+		var server = Syslog.UDP( null, info => {
 			//console.log(info)
 			info.port = null ; // port is random
 			var shouldRet = {
@@ -28,12 +28,13 @@ describe('given a simple-syslog-server', () => {
 			assert.deepEqual(shouldRet, info) ;
 			server.close() ;
 			done() ;
-		}).listen(port, err => { // sudo
-			console.log('listen', err) ;
+		}).listen(options, err => { // sudo
+			if(err)
+				console.log('listen', err) ;
 			assert(!err) ;
 			var client = dgram.createSocket('udp4') ;
 			var buffer = new Buffer(testMsg) ;
-			client.send(buffer, 0, buffer.length, port, 'localhost', (err, bytes) => {
+			client.send(buffer, 0, buffer.length, options.port, 'localhost', (err, bytes) => {
 				//console.log('send', err, bytes)
 			}) ;
 		}) ;

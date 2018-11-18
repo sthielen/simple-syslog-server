@@ -49,13 +49,13 @@ var SERVICE = {
 	'TLS': TLS
 } ;
 
-function factory(transport) {
+function factory(transport, options, cb) {
 	var args = Array.from(arguments) ;
 	// Throw away transport
 	args.shift() ;
 	transport = transport.toUpperCase() ;
 	if (transport in SERVICE)
-		return SERVICE[transport].apply(null, args) ;
+		return SERVICE[transport].call(null, options, cb) ;
 
 	throw new Error('Transport not supported: ' + transport) ;
 }
@@ -88,32 +88,36 @@ Transport.prototype.on = function(event, cb) {
 	return this ;
 } ;
 
-Transport.prototype.close = function(callback) {
-	this.server.close(callback) ;
+Transport.prototype.close = function(cb) {
+	cb = cb || noop ;
+	this.server.close(cb) ;
 } ;
 
 
-function UDP(fn, opt) {
+function UDP(options, cb) {
 	if (!(this instanceof UDP))
-		return new UDP(fn, opt) ;
+		return new UDP(options, cb) ;
 
-	this.opt = opt || {} ;
-	this.handler = fn ;
+	this.opt = options || {} ;
+	this.handler = cb || noop ;
 
 	this.server = dgram.createSocket('udp4') ;
 }
 
 util.inherits(UDP, Transport) ;
 
-UDP.prototype.listen = function(port, cb) {
+UDP.prototype.listen = function(options, cb) {
 	var server = this.server ;
+	options = options || { port: 514 } ; // default is 514
+	this.transport = options ;
+
 	if (this.port) {
-		debug('server has binded to %s', port) ;
+		debug('server has binded to %s', this.port) ;
 		return ;
 	}
-	debug('try bind to %s', port) ;
+	debug('try bind to %s', options.port) ;
 	cb = cb || noop ;
-	this.port = port || 514 ; // default is 514
+	this.port = options.port ;
 
 	server
 	.on('error', err => {
@@ -128,7 +132,7 @@ UDP.prototype.listen = function(port, cb) {
 		var info = parser(msg, rinfo) ;
 		this.handler(info) ;
 	})
-	.bind(port, this.opt.address) ;
+	.bind(options) ;
 
 	return this ;
 } ;
@@ -139,27 +143,27 @@ UDP.prototype.listen = function(port, cb) {
 const net = require('net') ;
 const tls = require('tls') ;
 
-function TCP(callback, options) {
+function TCP(options, cb) {
 	if(this instanceof TCP)
-		StreamService.call(this, net, callback, options) ;
+		StreamService.call(this, net, options, cb) ;
 	else
-		return new TCP(callback, options) ;
+		return new TCP(options, cb) ;
 }
 
 util.inherits(TCP, StreamService) ;
 
-function TLS(callback, options) {
+function TLS(options, cb) {
 	if(this instanceof TLS)
-		StreamService.call(this, tls, callback, options) ;
+		StreamService.call(this, tls, options, cb) ;
 	else
-		return new TLS(callback, options) ;
+		return new TLS(options, cb) ;
 }
 
 util.inherits(TLS, StreamService) ;
 
-function StreamService(serviceModule, fn, opt) {
-	this.opt = opt || {} ;
-	this.handler = fn ;
+function StreamService(serviceModule, options, cb) {
+	this.opt = options || {} ;
+	this.handler = cb || noop ;
 	this.connections = {} ;
 
 	this.server = serviceModule.createServer(this.opt, (connection) => {
@@ -180,29 +184,32 @@ function StreamService(serviceModule, fn, opt) {
 
 util.inherits(StreamService, Transport) ;
 
-StreamService.prototype.listen = function(port, callback) {
+StreamService.prototype.listen = function(options, cb) {
 	var server = this.server ;
-	callback = callback || noop ;
-	this.port = port || 514 ; // default is 514
+	cb = cb || noop ;
+	options = options || { port: 514 } ; // default is 514
+	this.transport = options ;
+	this.port = options.port ;
 	debug('Binding to ' + this.port) ;
 
 	server
 	.on('error', err => {
 		debug('binding error: %o', err) ;
-		callback(err) ;
+		cb(err) ;
 	})
 	.on('listening', () => {
 		debug('tcp binding ok') ;
+		this.transport.port = server.address().port ;
 		this.port = server.address().port ;
-		callback(null, this) ;
+		cb(null, this) ;
 	})
-	.listen(port, this.opt.address) ;
+	.listen(options) ;
 
 	return this ;
 } ;
 
-StreamService.prototype.close = function(callback) {
-	Transport.prototype.close.call(this, callback) ;
+StreamService.prototype.close = function(cb) {
+	Transport.prototype.close.call(this, cb) ;
 	for (var c in this.connections) 
 		this.connections[c].end() ;
 

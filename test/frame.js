@@ -142,11 +142,9 @@ describe( 'StreamFrameParser', () => {
 		const count = 2500 ;
 		beforeEach( () => {
 			var output = Buffer.from('') ;
-			console.log('Building buffer') ;
 			for( var i = 0 ; i < count ; i++)
 				output = Buffer.concat([output, Buffer.from('Test ' + i + '\n', 'utf-8')]) ;
 			
-			console.log('Done') ;
 			parser.feed( output ) ;
 			parser.done() ;
 		}) ;
