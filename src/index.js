@@ -49,6 +49,13 @@ const SERVICE = {
 	'TLS': TLS
 } ;
 
+/**
+ * Factory function to create instances of syslog servers
+ * @param {(net|tls|dgram)} transport Server constructor
+ * @param {Object} [options={}] Options to pass to the syslog instance
+ * @param {function=} cb Callback function for received messages
+ * @return {(UDP|TCP|TLS)}
+ */
 function factory(transport, options, cb) {
 	transport = transport.toUpperCase() ;
 	if (transport in SERVICE)
@@ -62,6 +69,12 @@ module.exports = factory ;
 function noop() {
 }
 
+
+/**
+ * Given facility code, return its name
+ * @param {number} code facility code
+ * @return {string} facility name
+ */
 function facility(code) {
 	if (code >= 0 && code <= 23)
 		return FACILITY[code] ;
@@ -69,6 +82,11 @@ function facility(code) {
 		throw new Error('Invalid facility code: ' + code) ;
 }
 
+/**
+ * Given severity code, return its name
+ * @param {number} code severity code
+ * @return {string} severity name
+ */
 function severity(code) {
 	if (code >= 0 && code <= 7)
 		return SEVERITY[code] ;
@@ -77,20 +95,56 @@ function severity(code) {
 
 }
 
+/**
+ * @class
+ * @classdesc Abstract class for all syslog servers
+ * @constructor Abstract constructor for all syslog servers
+ * @return {Transport}
+ */
 function Transport() {
 }
 
+/**
+ * Register an event handler on the underlying server instance
+ * @param {string} event event name
+ * @param {function} cb callback function to call on event
+ * @return {Transport}
+ */
 Transport.prototype.on = function(event, cb) {
 	this.server.on(event, cb) ;
 	return this ;
 } ;
 
+/**
+ * Close the socket for this server
+ * @param {function} cb callback function when socket closed
+ * @return {Transport}
+ */
 Transport.prototype.close = function(cb) {
 	cb = cb || noop ;
 	this.server.close(cb) ;
+	return this ;
 } ;
 
+/**
+ * Start listening for messages
+ * @param {Object} [options={}] Options to pass to the syslog instance
+ * @param {function} cb callback function to call on return from listen
+ * @abstract
+ * @return {(UDP|TCP|TLS)}
+ */
+Transport.prototype.listen = function(options, cb) {
+	throw new Error('must be implemented by subclass!') ;
+} ;
 
+/**
+ * @class
+ * @classdesc An instance of a UDP Syslog Server
+ * @param {object} options Options to pass to the UDP Syslog Server
+ * @param {function=} cb callback function when server receives a message
+ * @return {UDP}
+ * @constructor
+ */
 function UDP(options, cb) {
 	if (!(this instanceof UDP))
 		return new UDP(options, cb) ;
@@ -103,6 +157,12 @@ function UDP(options, cb) {
 
 util.inherits(UDP, Transport) ;
 
+/**
+ * Listen to IP/port for messages
+ * @param {object} options Options for UDP.bind call
+ * @param {function} cb callback function after listen (bind)
+ * @return {UDP}
+ */
 UDP.prototype.listen = function(options, cb) {
 	let server = this.server ;
 	options = options || { port: 514 } ; // default is 514
@@ -140,6 +200,14 @@ UDP.prototype.listen = function(options, cb) {
 const net = require('net') ;
 const tls = require('tls') ;
 
+/**
+ * @class
+ * @classdesc An instance of a TCP Syslog Server
+ * @param {object} options Options to pass to the TCP Syslog Server
+ * @param {function=} cb callback function when server receives a message
+ * @return {TCP}
+ * @constructor
+ */
 function TCP(options, cb) {
 	if(this instanceof TCP)
 		StreamService.call(this, net, options, cb) ;
@@ -149,6 +217,14 @@ function TCP(options, cb) {
 
 util.inherits(TCP, StreamService) ;
 
+/**
+ * @class
+ * @classdesc An instance of a TLS Syslog Server
+ * @param {object} options Options to pass to the TLS Syslog Server
+ * @param {function=} cb callback function when server receives a message
+ * @return {TLS}
+ * @constructor
+ */
 function TLS(options, cb) {
 	if(this instanceof TLS)
 		StreamService.call(this, tls, options, cb) ;
@@ -158,6 +234,14 @@ function TLS(options, cb) {
 
 util.inherits(TLS, StreamService) ;
 
+/**
+ * @class
+ * @classdesc An abstract class for streaming transports
+ * @param {object} options Options to pass to the streaming transport
+ * @param {function=} cb callback function when server receives a message
+ * @return {(TCP|TLS)}
+ * @constructor
+ */
 function StreamService(serviceModule, options, cb) {
 	this.opt = options || {} ;
 	this.handler = cb || noop ;
@@ -181,6 +265,13 @@ function StreamService(serviceModule, options, cb) {
 
 util.inherits(StreamService, Transport) ;
 
+/**
+ * Listen to IP/port for connections
+ * @param {object} options Options for TCP/TLS.listen call
+ * @param {function} cb callbback function after listen
+ * @return {(TCP|TLS)}
+ * @constructor
+ */
 StreamService.prototype.listen = function(options, cb) {
 	let server = this.server ;
 	cb = cb || noop ;
@@ -205,12 +296,18 @@ StreamService.prototype.listen = function(options, cb) {
 	return this ;
 } ;
 
+/**
+ * Close the listening socket and all connected clients for this server
+ * @param {function} cb callback function when socket closed
+ * @return {Transport}
+ */
 StreamService.prototype.close = function(cb) {
 	Transport.prototype.close.call(this, cb) ;
 	for (let c in this.connections)
 		this.connections[c].end() ;
 
 	this.connections = {} ;
+	return this ;
 } ;
 
 
