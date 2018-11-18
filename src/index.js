@@ -149,10 +149,10 @@ function UDP(options, cb) {
 	if (!(this instanceof UDP))
 		return new UDP(options, cb) ;
 
-	this.opt = options || {} ;
+	this.opt = options || { type: 'udp4' } ;
 	this.handler = cb || noop ;
 
-	this.server = dgram.createSocket('udp4') ;
+	this.server = dgram.createSocket(this.opt) ;
 }
 
 util.inherits(UDP, Transport) ;
