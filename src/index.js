@@ -52,7 +52,7 @@ const SERVICE = {
 /**
  * Factory function to create instances of syslog servers
  * @param {(net|tls|dgram)} transport Server constructor
- * @param {Object} [options={}] Options to pass to the syslog instance
+ * @param {object} [options={}] Options to pass to the syslog instance
  * @param {function=} cb Callback function for received messages
  * @return {(UDP|TCP|TLS)}
  */
@@ -141,6 +141,7 @@ Transport.prototype.listen = function(options, cb) {
  * @class
  * @classdesc An instance of a UDP Syslog Server
  * @param {object} options Options to pass to the UDP Syslog Server
+ * @param {string} options.type The UDP transport type ('udp4' or 'udp6')
  * @param {function=} cb callback function when server receives a message
  * @return {UDP}
  * @constructor
@@ -159,7 +160,11 @@ util.inherits(UDP, Transport) ;
 
 /**
  * Listen to IP/port for messages
+ * @override
  * @param {object} options Options for UDP.bind call
+ * @param {port} options.port UDP port number
+ * @param {string} options.address IP address or hostname to bind to
+ * @param {boolean} options.exclusive Whether to share the socket with others
  * @param {function} cb callback function after listen (bind)
  * @return {UDP}
  */
@@ -203,7 +208,7 @@ const tls = require('tls') ;
 /**
  * @class
  * @classdesc An instance of a TCP Syslog Server
- * @param {object} options Options to pass to the TCP Syslog Server
+ * @param {object} options Options to pass to the TCP Syslog Server @see net.createServer
  * @param {function=} cb callback function when server receives a message
  * @return {TCP}
  * @constructor
@@ -221,6 +226,9 @@ util.inherits(TCP, StreamService) ;
  * @class
  * @classdesc An instance of a TLS Syslog Server
  * @param {object} options Options to pass to the TLS Syslog Server
+ * @param {(string|string[]|Buffer|Buffer[])=} [options.ca] Optionally override the trusted CA certificates.
+ * @param {(string|string[]|Buffer|Buffer[])} [options.cert] Cert chains in PEM format.
+ * @param {(string|string[]|Buffer|Buffer[]|Object[])} [options.key] Private keys in PEM format.
  * @param {function=} cb callback function when server receives a message
  * @return {TLS}
  * @constructor
@@ -267,6 +275,7 @@ util.inherits(StreamService, Transport) ;
 
 /**
  * Listen to IP/port for connections
+ * @override
  * @param {object} options Options for TCP/TLS.listen call
  * @param {function} cb callbback function after listen
  * @return {(TCP|TLS)}
@@ -298,6 +307,7 @@ StreamService.prototype.listen = function(options, cb) {
 
 /**
  * Close the listening socket and all connected clients for this server
+ * @override
  * @param {function} cb callback function when socket closed
  * @return {Transport}
  */
