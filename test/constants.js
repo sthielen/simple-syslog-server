@@ -2,7 +2,7 @@
 const dgram = require('dgram') ;
 const assert = require('assert') ;
 const mocha = require('mocha') ;
-const Syslog = require('../src/') ;
+const SyslogServer = require('../src/') ;
 
 describe('given severity codes', () => {
 	it('returns the correct description', () => {
@@ -19,7 +19,7 @@ describe('given severity codes', () => {
 		] ;
 
 		SEVERITY.forEach((severity, code) => {
-			assert.equal(Syslog.severity(code), severity) ;
+			assert.equal(SyslogServer.severity(code), severity) ;
 		}) ;
 	}) ;
 }) ;
@@ -55,7 +55,7 @@ describe('given facility codes', () => {
 		] ;
 
 		FACILITY.forEach((facility, code) => {
-			assert.equal(Syslog.facility(code), facility) ;
+			assert.equal(SyslogServer.facility(code), facility) ;
 		}) ;
 	}) ;
 }) ;

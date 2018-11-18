@@ -10,8 +10,8 @@ let x509 = selfsigned.generate( attributes, { days: 2 } ) ;
 
 describe( 'given a TLS Syslog Server', () => {
 	it( 'Receives TLS/TCP/IP messages', (done) => {
-		const StreamSyslogd = require('../src/').TLS ;
-		assert( StreamSyslogd, 'TLSStreamService not defined' ) ;
+		const TlsSyslogServer = require('../src/').TLS ;
+		assert( TlsSyslogServer, 'TLSStreamService not defined' ) ;
 
 		const timestamp = 'Dec 15 10:58:44' ;
 		const testMsg = '<183>' + timestamp + ' hostname tag: info' ;
@@ -22,7 +22,7 @@ describe( 'given a TLS Syslog Server', () => {
 			ca: [ x509['cert'] ]
 		} ;
 
-		let server = StreamSyslogd(tls_options, info => {
+		let server = TlsSyslogServer(tls_options, info => {
 			info.port = null ; // port is random
 			info.address = null ;
 			info.family = null ;

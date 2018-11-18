@@ -2,7 +2,7 @@
 const dgram = require('dgram') ;
 const assert = require('assert') ;
 const mocha = require('mocha') ;
-const Syslog = require('../src/') ;
+const UdpSyslogServer = require('../src/').UDP ;
 
 describe('given a simple-syslog-server', () => {
 	it('receives and processes messages', (done) => {
@@ -10,7 +10,7 @@ describe('given a simple-syslog-server', () => {
 		const testMsg = '<183>' + timestamp + ' hostname tag: info' ;
 		const options = { port: 10514 } ;
 
-		let server = Syslog.UDP( null, info => {
+		let server = UdpSyslogServer( null, info => {
 			//console.log(info)
 			info.port = null ; // port is random
 			let shouldRet = {

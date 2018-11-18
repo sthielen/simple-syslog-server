@@ -2,25 +2,25 @@
 const dgram = require('dgram') ;
 const assert = require('assert') ;
 const mocha = require('mocha') ;
-const Syslog = require('../src/') ;
+const SyslogServer = require('../src/') ;
 
 describe('given the UDP transport name', () => {
 	it('instantiates a UDP simple-syslog-server object', () => {
-		let server = Syslog('UDP', null, info => {}) ;
-		assert.ok(server instanceof Syslog.UDP) ;
+		let server = SyslogServer('UDP', null, info => {}) ;
+		assert.ok(server instanceof SyslogServer.UDP) ;
 	}) ;
 }) ;
 
 describe('given the TCP transport name', () => {
 	it('instantiates a TCP simple-syslog-server object', () => {
-		let server = Syslog('TCP', null, info => {}) ;
-		assert.ok(server instanceof Syslog.TCP) ;
+		let server = SyslogServer('TCP', null, info => {}) ;
+		assert.ok(server instanceof SyslogServer.TCP) ;
 	}) ;
 }) ;
 
 describe('given the TLS transport name', () => {
 	it('instantiates a TLS simple-syslog-server object', () => {
-		let server = Syslog('TLS', null, info => {}) ;
-		assert.ok(server instanceof Syslog.TLS) ;
+		let server = SyslogServer('TLS', null, info => {}) ;
+		assert.ok(server instanceof SyslogServer.TLS) ;
 	}) ;
 }) ;

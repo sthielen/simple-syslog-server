@@ -5,14 +5,14 @@ const net = require('net') ;
 
 describe( 'given a TCP Syslog Server', () => {
 	it( 'Receives TCP/IP messages', (done) => {
-		const StreamSyslogd = require('../src/').TCP ;
-		assert( StreamSyslogd, 'StreamService not defined' ) ;
+		const TcpSyslogServer = require('../src/').TCP ;
+		assert( TcpSyslogServer, 'StreamService not defined' ) ;
 
 		const timestamp = 'Dec 15 10:58:44' ;
 		const testMsg = '<183>' + timestamp + ' hostname tag: info' ;
 		const options = { port: 0 } ;
 
-		let server = StreamSyslogd(null, function(info) {
+		let server = TcpSyslogServer(null, function(info) {
 			info.port = null ; // port is random
 			info.address = null ;
 			info.family = null ;
