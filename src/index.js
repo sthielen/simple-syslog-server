@@ -50,9 +50,6 @@ var SERVICE = {
 } ;
 
 function factory(transport, options, cb) {
-	var args = Array.from(arguments) ;
-	// Throw away transport
-	args.shift() ;
 	transport = transport.toUpperCase() ;
 	if (transport in SERVICE)
 		return SERVICE[transport].call(null, options, cb) ;
