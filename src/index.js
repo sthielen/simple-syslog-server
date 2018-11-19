@@ -165,38 +165,37 @@ util.inherits(UDP, Transport) ;
  * @param {port} options.port UDP port number
  * @param {string} options.address IP address or hostname to bind to
  * @param {boolean} options.exclusive Whether to share the socket with others
- * @param {function} cb callback function after listen (bind)
- * @return {UDP}
+ * @return {Promise<dgram.Socket>}
  */
-UDP.prototype.listen = function(options, cb) {
-	let server = this.server ;
-	options = options || { port: 514 } ; // default is 514
-	this.transport = options ;
+UDP.prototype.listen = function(options) {
+	return new Promise((resolve, reject) => {
+		let server = this.server ;
+		options = options || { port: 514 } ; // default is 514
+		this.transport = options ;
 
-	if (this.port) {
-		debug('server has binded to %s', this.port) ;
-		return ;
-	}
-	debug('try bind to %s', options.port) ;
-	cb = cb || noop ;
-	this.port = options.port ;
+		if (this.port) {
+			debug('server has binded to %s', this.port) ;
+			return ;
+		}
+		debug('try bind to %s', options.port) ;
+		resolve = resolve || noop ;
+		this.port = options.port ;
 
-	server
-	.on('error', err => {
-		debug('binding error: %o', err) ;
-		cb(err) ;
-	})
-	.on('listening', () => {
-		debug('binding ok') ;
-		cb(null) ;
-	})
-	.on('message', (msg, rinfo) => {
-		let info = parser(msg, rinfo) ;
-		this.handler(info) ;
-	})
-	.bind(options) ;
-
-	return this ;
+		server
+		.on('error', err => {
+			debug('binding error: %o', err) ;
+			reject(err) ;
+		})
+		.on('listening', () => {
+			debug('binding ok') ;
+			resolve(server) ;
+		})
+		.on('message', (msg, rinfo) => {
+			let info = parser(msg, rinfo) ;
+			this.handler(info) ;
+		})
+		.bind(options) ;
+	}) ;
 } ;
 
 /*
@@ -279,30 +278,30 @@ util.inherits(StreamService, Transport) ;
  * @param {object} options Options for TCP/TLS.listen call
  * @param {function} cb callbback function after listen
  * @return {(TCP|TLS)}
- * @constructor
+ * @return {Promise}
  */
-StreamService.prototype.listen = function(options, cb) {
-	let server = this.server ;
-	cb = cb || noop ;
-	options = options || { port: 514 } ; // default is 514
-	this.transport = options ;
-	this.port = options.port ;
-	debug('Binding to ' + this.port) ;
+StreamService.prototype.listen = function(options) {
+	return new Promise((resolve,reject) => {
+		let server = this.server ;
+		resolve = resolve || noop ;
+		options = options || { port: 514 } ; // default is 514
+		this.transport = options ;
+		this.port = options.port ;
+		debug('Binding to ' + this.port) ;
 
-	server
-	.on('error', err => {
-		debug('binding error: %o', err) ;
-		cb(err) ;
-	})
-	.on('listening', () => {
-		debug('tcp binding ok') ;
-		this.transport.port = server.address().port ;
-		this.port = server.address().port ;
-		cb(null, this) ;
-	})
-	.listen(options) ;
-
-	return this ;
+		server
+		.on('error', err => {
+			debug('binding error: %o', err) ;
+			reject(err) ;
+		})
+		.on('listening', () => {
+			debug('tcp binding ok') ;
+			this.transport.port = server.address().port ;
+			this.port = server.address().port ;
+			resolve(this) ;
+		})
+		.listen(options) ;
+	}) ;
 } ;
 
 /**

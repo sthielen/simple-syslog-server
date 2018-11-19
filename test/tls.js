@@ -41,14 +41,15 @@ describe( 'given a TLS Syslog Server', () => {
 			assert.deepEqual(shouldRet, info) ;
 			server.close() ;
 			done() ;
-		}).listen( options, (err, service ) => { // sudo
+		}) ;
+		server.listen(options)
+		.then(service => {
 			//This is required because NodeJS is really strange about self signed certificates.
 			function identity_check( host, cert ){
 				let cn = cert.subject.CN ;
 				return host == cn ? undefined : new Error('subject mistmatch: host ${host} and CN ${cn}') ;
 			}
 
-			assert.ifError( err ) ;
 			let buffer = new Buffer(testMsg) ;
 			let client = tls.connect( service.port, 'localhost', { checkServerIdentity: identity_check, ca: [ x509['cert'] ] }, () => {
 				// eslint-disable-next-line no-unused-vars
@@ -57,6 +58,9 @@ describe( 'given a TLS Syslog Server', () => {
 					client.end() ;
 				}) ;
 			}) ;
+		})
+		.catch(err => {
+			assert.ifError(err) ;
 		}) ;
 	}) ;
 }) ;

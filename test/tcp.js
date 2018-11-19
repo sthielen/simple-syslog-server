@@ -31,15 +31,19 @@ describe( 'given a TCP Syslog Server', () => {
 			assert.deepEqual(shouldRet, info) ;
 			server.close() ;
 			done() ;
-		}).listen( options, (err, service ) => { // sudo
-			assert.ifError( err ) ;
+		}) ;
+		server.listen(options)
+		.then(service => {
 			let buffer = new Buffer(testMsg) ;
-			let client = net.connect( options, function() {
+			let client = net.connect( service.port, 'localhost', () => {
 				client.write(buffer, (err, bytes) => {
 					assert.ifError( err ) ;
 					client.end() ;
 				}) ;
 			}) ;
+		})
+		.catch(err => {
+			assert.ifError( err ) ;
 		}) ;
 	}) ;
 }) ;

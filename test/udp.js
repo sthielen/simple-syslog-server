@@ -12,7 +12,7 @@ describe('given a simple-syslog-server', () => {
 
 		let server = UdpSyslogServer( null, info => {
 			//console.log(info)
-			info.port = null ; // port is random
+			info.port = null ;
 			let shouldRet = {
 				facility: 22,
 				severity: 7,
@@ -28,15 +28,18 @@ describe('given a simple-syslog-server', () => {
 			assert.deepEqual(shouldRet, info) ;
 			server.close() ;
 			done() ;
-		}).listen(options, err => { // sudo
-			if(err)
-				console.log('listen', err) ;
-			assert(!err) ;
-			let client = dgram.createSocket('udp4') ;
-			let buffer = new Buffer(testMsg) ;
+		}) ;
+		server.listen(options)
+		.then(sock => {
+			var client = dgram.createSocket('udp4') ;
+			var buffer = new Buffer(testMsg) ;
 			client.send(buffer, 0, buffer.length, options.port, 'localhost', (err, bytes) => {
 				//console.log('send', err, bytes)
 			}) ;
+		})
+		.catch(err => { // sudo
+			assert(false, err) ;
+			done() ;
 		}) ;
 	}) ;
 }) ;
