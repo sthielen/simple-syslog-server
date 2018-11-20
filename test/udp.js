@@ -11,6 +11,8 @@ describe('given a simple-syslog-server', () => {
 		const options = { port: 10514 } ;
 
 		let server = UdpSyslogServer( null, info => {
+		}) ;
+		server.on('msg', info => {
 			//console.log(info)
 			info.port = null ;
 			let shouldRet = {
@@ -26,10 +28,10 @@ describe('given a simple-syslog-server', () => {
 				msg: 'info'
 			} ;
 			assert.deepEqual(shouldRet, info) ;
-			server.close() ;
-			done() ;
-		}) ;
-		server.listen(options)
+			server.close()
+			.then(() => done()) ;
+		})
+		.listen(options)
 		.then(sock => {
 			var client = dgram.createSocket('udp4') ;
 			var buffer = new Buffer(testMsg) ;

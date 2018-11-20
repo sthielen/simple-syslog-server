@@ -22,7 +22,8 @@ describe( 'given a TLS Syslog Server', () => {
 			ca: [ x509['cert'] ]
 		} ;
 
-		let server = TlsSyslogServer(tls_options, info => {
+		let server = TlsSyslogServer(tls_options) ;
+		server.on('msg', info => {
 			info.port = null ; // port is random
 			info.address = null ;
 			info.family = null ;
@@ -39,10 +40,10 @@ describe( 'given a TLS Syslog Server', () => {
 				msg: 'info'
 			} ;
 			assert.deepEqual(shouldRet, info) ;
-			server.close() ;
-			done() ;
-		}) ;
-		server.listen(options)
+			server.close()
+			.then(() => done()) ;
+		})
+		.listen(options)
 		.then(service => {
 			//This is required because NodeJS is really strange about self signed certificates.
 			function identity_check( host, cert ){

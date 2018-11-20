@@ -4,6 +4,8 @@ const debug = require('debug')('simple-syslog-server') ;
 
 function ConnectionState(service, connection) {
 	this.service = service ;
+	this.connection = connection ;
+
 	this.info = {
 		address: connection.remoteAddress,
 		family: connection.remoteFamily,
@@ -27,11 +29,12 @@ ConnectionState.prototype.dispatch_message = function(frame) {
 	} ;
 	debug(`raw:${frame}`) ;
 	let message = parser(frame, clientInfo) ;
-	this.service.handler(message) ;
+	this.connection.server.emit('msg', message) ;
 } ;
 
 ConnectionState.prototype.closed = function() {
 	this.frameParser.done() ;
+	delete this.connection ;
 } ;
 
 module.exports = ConnectionState ;

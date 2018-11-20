@@ -12,7 +12,8 @@ describe( 'given a TCP Syslog Server', () => {
 		const testMsg = '<183>' + timestamp + ' hostname tag: info' ;
 		const options = { port: 0 } ;
 
-		let server = TcpSyslogServer(null, function(info) {
+		let server = TcpSyslogServer(null) ;
+		server.on('msg', info => {
 			info.port = null ; // port is random
 			info.address = null ;
 			info.family = null ;
@@ -29,10 +30,10 @@ describe( 'given a TCP Syslog Server', () => {
 				msg: 'info'
 			} ;
 			assert.deepEqual(shouldRet, info) ;
-			server.close() ;
-			done() ;
-		}) ;
-		server.listen(options)
+			server.close()
+			.then(() => done()) ;
+		})
+		.listen(options)
 		.then(service => {
 			let buffer = new Buffer(testMsg) ;
 			let client = net.connect( service.port, 'localhost', () => {
