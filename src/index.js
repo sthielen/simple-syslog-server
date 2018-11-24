@@ -6,14 +6,14 @@ const ConnectionState = require('./ConnectionState') ;
 const parser = require('./parser') ;
 
 const SEVERITY = [
-	'Emergency',
-	'Alert',
-	'Critical',
-	'Error',
-	'Warning',
-	'Notice',
-	'Informational',
-	'Debug'
+	'emerg',
+	'alert',
+	'crit',
+	'err',
+	'warning',
+	'notice',
+	'info',
+	'debug'
 ] ;
 
 const FACILITY = [
