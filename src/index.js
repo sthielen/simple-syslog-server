@@ -244,14 +244,16 @@ StreamService.prototype.close = function() {
 	return new Promise((resolve, reject) => {
 		Transport.prototype.close.call(this)
 		.then(() => {
-			for (let c in this.connections)
-				this.connections[c].end() ;
 			this.connections = {} ;
 			resolve() ;
 		})
 		.catch(err => {
 			reject(err) ;
 		}) ;
+		for (let c in this.connections) {
+			this.connections[c].destroy();
+			delete this.connections[c] ;
+		}
 	}) ;
 } ;
 
