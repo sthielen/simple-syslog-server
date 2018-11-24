@@ -28,8 +28,10 @@ describe( 'given a TLS Syslog Server', () => {
 			info.address = null ;
 			info.family = null ;
 			let shouldRet = {
-				facility: 22,
-				severity: 7,
+				facility: 'local6',
+				facilityCode: 22,
+				severity: 'debug',
+				severityCode: 7,
 				tag: 'tag',
 				timestamp: new Date(timestamp + ' ' + new Date().getFullYear()),
 				hostname: 'hostname',

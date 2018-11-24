@@ -5,44 +5,6 @@ const util = require('util') ;
 const ConnectionState = require('./ConnectionState') ;
 const parser = require('./parser') ;
 
-const SEVERITY = [
-	'emerg',
-	'alert',
-	'crit',
-	'err',
-	'warning',
-	'notice',
-	'info',
-	'debug'
-] ;
-
-const FACILITY = [
-	'kern',
-	'user',
-	'mail',
-	'daemon',
-	'auth',
-	'syslog',
-	'lpr',
-	'news',
-	'uucp',
-	'cron',
-	'authpriv',
-	'ftp',
-	'ntp',
-	'logaudit',
-	'logalert',
-	'clock',
-	'local0',
-	'local1',
-	'local2',
-	'local3',
-	'local4',
-	'local5',
-	'local6',
-	'local7',
-] ;
-
 const SERVICE = {
 	'UDP': UDP,
 	'TCP': TCP,
@@ -68,31 +30,6 @@ module.exports = factory ;
 function noop() {
 }
 
-
-/**
- * Given facility code, return its name
- * @param {number} code facility code
- * @return {string} facility name
- */
-function facility(code) {
-	if (code >= 0 && code <= 23)
-		return FACILITY[code] ;
-	else
-		throw new Error('Invalid facility code: ' + code) ;
-}
-
-/**
- * Given severity code, return its name
- * @param {number} code severity code
- * @return {string} severity name
- */
-function severity(code) {
-	if (code >= 0 && code <= 7)
-		return SEVERITY[code] ;
-	else
-		throw new Error('Invalid severity code: ' + code) ;
-
-}
 
 /**
  * @class
@@ -320,8 +257,6 @@ StreamService.prototype.close = function() {
 
 
 
-module.exports.facility = facility ;
-module.exports.severity = severity ;
 module.exports.UDP = UDP ;
 module.exports.TCP = TCP ;
 module.exports.TLS = TLS ;
