@@ -106,6 +106,10 @@ UDP.prototype.listen = function(options) {
 	return new Promise((resolve, reject) => {
 		let server = this.server ;
 		options = options || { port: 514 } ; // default is 514
+		if (options.host) {
+			options.address = options.host ;
+			delete options.host ;
+		}
 		this.transport = options ;
 
 		if (this.port) {
@@ -215,6 +219,10 @@ StreamService.prototype.listen = function(options) {
 		let server = this.server ;
 		resolve = resolve || noop ;
 		options = options || { port: 514 } ; // default is 514
+		if (options.address) {
+			options.host = options.address ;
+			delete options.address ;
+		}
 		this.transport = options ;
 		this.port = options.port ;
 		debug('Binding to ' + this.port) ;
