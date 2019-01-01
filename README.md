@@ -12,6 +12,12 @@ npm install simple-syslog-server
 
 ## Usage
 
+Refer to the `logger` command for testing the examples included in this package.
+
+```bash
+man logger
+```
+
 ### Synopsis
 ```js
 
@@ -173,4 +179,4 @@ server.on('msg', data => {
 
 ```
 
-Finally, and unpredictably, `options` for the UDP transport relate to the [dgram.createSocket()](http://nodejs.org/api/dgram.html#dgram_dgram_createsocket_options_callback "dgram.createSocket") call.  For UDP sockets, rather than `listen`, they `bind` instead.  However, the principle is the same as other transport types.  Thus, a call to syslog `server.listen` method is identical to calling `bind`, and the `listen` options also relate to [socket.bind()](https://nodejs.org/api/dgram.html#dgram_socket_bind_port_address_callback).
+Finally, and predictably, `options` for the UDP transport relate to the [dgram.createSocket()](http://nodejs.org/api/dgram.html#dgram_dgram_createsocket_options_callback "dgram.createSocket") call.  For UDP sockets, rather than `listen`, they `bind` instead.  However, the principle is the same as other transport types.  Thus, a call to syslog `server.listen` method is identical to calling `bind`, and the `listen` options also relate to [socket.bind()](https://nodejs.org/api/dgram.html#dgram_socket_bind_port_address_callback).
