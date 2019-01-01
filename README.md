@@ -180,3 +180,25 @@ server.on('msg', data => {
 ```
 
 Finally, and predictably, `options` for the UDP transport relate to the [dgram.createSocket()](http://nodejs.org/api/dgram.html#dgram_dgram_createsocket_options_callback "dgram.createSocket") call.  For UDP sockets, rather than `listen`, they `bind` instead.  However, the principle is the same as other transport types.  Thus, a call to syslog `server.listen` method is identical to calling `bind`, and the `listen` options also relate to [socket.bind()](https://nodejs.org/api/dgram.html#dgram_socket_bind_port_address_callback).
+
+## Acknowledgements
+
+Like others who stand on the shoulders of giants, I'd like to acknowledge
+the contributions of the following people/groups without which, more directly,
+this modest Node-RED node would not be possible.
+
+- [Mark Eschbach](https://github.com/meschbach "Mark Eschbach") and [chunpu](https://github.com/chunpu "chunpu") for their [initial work](https://github.com/meschbach/syslogd) on a node.js implementation of syslog on which [I forked](https://github.com/damoclark/simple-syslog-server "simple syslog server") to create this module.
+- [rawpixel](https://pixabay.com/en/users/rawpixel-4283981/) for the [logo artwork](https://pixabay.com/en/graphic-icon-folder-data-file-3685581/) used in this module. 
+
+## Licence
+
+Portions created by Mark Eschbach and Chunpu are copyrighted and MIT licenced.  This module has been relicenced according to Apache 2.0
+
+Copyright (c) 2019 Damien Clark
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+
+[http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0 "Apache Licence")
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
