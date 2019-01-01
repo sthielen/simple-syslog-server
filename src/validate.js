@@ -30,7 +30,7 @@ function validate(msg) {
 		// If not, then add to list of invalid fields
 		// TODO Implement more meaningful error showing which fields are invalid
 		if(!v)
-			invalid.push(field);
+			invalid.push(field) ;
 		// Have we found an invalid field yet?
 		validated = validated && v ;
 	}) ;

@@ -1,7 +1,7 @@
 const FrameParser = require('./FrameParser') ;
 const parser = require('./parser') ;
 const debug = require('debug')('simple-syslog-server') ;
-const validate = require('./validate');
+const validate = require('./validate') ;
 
 function ConnectionState(service, connection) {
 	this.service = service ;
@@ -37,7 +37,7 @@ ConnectionState.prototype.dispatch_message = function(frame) {
 			this.connection.server.emit('invalid', message) ;
 	}
 	catch(err) {
-		this.connection.server.emit('invalid', err);
+		this.connection.server.emit('invalid', err) ;
 	}
 } ;
 

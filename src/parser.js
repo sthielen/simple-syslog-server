@@ -123,7 +123,7 @@ function parser(msg, rinfo) {
 		port: rinfo.port,
 		size: rinfo.size,
 		msg: msg.substr(tagIndex + 2)
-	};
+	} ;
 }
 
 module.exports = parser ;
