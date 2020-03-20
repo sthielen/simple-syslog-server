@@ -32,8 +32,6 @@ const dgram = require('dgram') ;
 const debug = require('debug')('simple-syslog-server') ;
 const util = require('util') ;
 const ConnectionState = require('./ConnectionState') ;
-const parser = require('./parser') ;
-const validate = require('./validate') ;
 
 const SERVICE = {
 	'UDP': UDP,
@@ -161,11 +159,7 @@ UDP.prototype.listen = function(options) {
 		})
 		.on('message', (msg, rinfo) => {
 			try {
-				let info = parser(msg, rinfo) ;
-				if(validate(info))
-					server.emit('msg', info) ;
-				else
-					server.emit('invalid', info) ;
+				server.emit('msg', msg) ;
 			}
 			catch (err) {
 				server.emit('invalid', err) ;
