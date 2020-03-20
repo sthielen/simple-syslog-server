@@ -82,6 +82,7 @@ function facility(code) {
  * @return {string} severity name
  */
 function severity(code) {
+	console.log('severity', code);
 	if (code >= 0 && code <= 7)
 		return SEVERITY[code] ;
 	else
